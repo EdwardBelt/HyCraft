@@ -1,0 +1,12 @@
+{
+  "Unmapped_Value": -1,
+  "SFX_Effect_Burn_World": "entity.player.hurt_on_fire",
+  "SFX_Effect_Burn_Local": "entity.player.hurt_on_fire",
+  "SFX_Unarmed_Impact": "entity.player.hurt",
+  "SFX_Longsword_Special_Impact": "entity.player.hurt",
+  "SFX_Axe_Special_Impact": "entity.player.hurt",
+  "SFX_Sword_T2_Impact": "entity.player.hurt",
+  "SFX_Crops_Grow": "block.growing_plant.crop",
+  "SFX_Player_Pickup_Item": "entity.item.pickup",
+  "SFX_Discovery_Z1_Medium": "item.goat_horn.sound.0"
+}

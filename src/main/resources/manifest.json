@@ -1,0 +1,18 @@
+{
+  "Group": "es.edwardbelt.hycraft",
+  "Name": "HyCraft",
+  "Version": "${version}",
+  "Description": "Enable Minecraft clients join your Hytale server!",
+  "Authors": [
+    {
+      "Name": "EdwardBelt"
+    }
+  ],
+  "Website": "https://discord.gg/7RapfdQ7VH",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "Main": "es.edwardbelt.hycraft.HyCraft"
+}
