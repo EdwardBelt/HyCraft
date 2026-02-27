@@ -1,6 +1,8 @@
 # HyCraft
 
-HyCraft is a Hytale mod that bridges Minecraft clients to Hytale servers via packet translation. It spins up a TCP server that intercepts incoming Minecraft packets, translates them, and forwards them to the underlying Hytale server, allowing Minecraft players to connect without any client-side modifications.
+HyCraft is a Hytale mod that bridges Minecraft 1.21.10 clients to Hytale servers via packet translation. It spins up a TCP server that intercepts incoming Minecraft packets, translates them, and forwards them to the underlying Hytale server, allowing Minecraft players to connect without any client-side modifications.
+
+### Test Server: 45.59.171.227:25565
 
 > ⚠️ This project is in early development. Expect bugs and incomplete features.
 
