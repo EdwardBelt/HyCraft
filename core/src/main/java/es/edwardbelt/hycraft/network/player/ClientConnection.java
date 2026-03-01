@@ -197,6 +197,7 @@ public class ClientConnection implements HyCraftConnection {
         if (hytaleChannel != null && hytaleChannel.isOpen()) {
             ProtocolUtil.closeApplicationConnection(hytaleChannel);
         }
+        if (blockBreakTracker != null) blockBreakTracker.cancel();
         hytaleChannel = null;
     }
 }
