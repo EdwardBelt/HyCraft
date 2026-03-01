@@ -96,6 +96,11 @@ public class BlockBreakManager {
 
     private void applyBlockDamage(ClientConnection connection, BlockBreakTracker tracker,
                                   Store<EntityStore> store, Ref<EntityStore> entityRef, World world) {
+        if (!entityRef.isValid()) {
+            cancelBreaking(connection);
+            return;
+        }
+
         Vector3i targetBlock = tracker.position.toVector3i();
 
         try {
