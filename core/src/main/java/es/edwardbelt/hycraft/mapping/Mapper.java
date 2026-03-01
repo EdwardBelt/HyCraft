@@ -1,7 +1,13 @@
 package es.edwardbelt.hycraft.mapping;
 
+import es.edwardbelt.hycraft.HyCraft;
+import es.edwardbelt.hycraft.config.JsonConfig;
 import es.edwardbelt.hycraft.mapping.loader.MappingLoader;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,16 +19,18 @@ public abstract class Mapper<K> {
     private final Map<K, Integer> mappings = new HashMap<>();
     private int unmappedValue;
     private final String fileName;
+    private final JsonConfig jsonConfig;
 
     private final Set<String> neededStringIds = new HashSet<>();
 
     public Mapper(String fileName) {
         this.fileName = fileName;
+        this.jsonConfig = new JsonConfig("mappings/" + fileName);
     }
 
     public void loadMappings() {
         try {
-            Map<String, Object> rawMappings = MappingLoader.loadMapping(fileName);
+            Map<String, Object> rawMappings = MappingLoader.loadMapping(jsonConfig);
             mappings.clear();
             neededStringIds.clear();
 

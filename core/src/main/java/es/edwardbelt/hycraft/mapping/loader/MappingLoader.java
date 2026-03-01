@@ -1,43 +1,25 @@
 package es.edwardbelt.hycraft.mapping.loader;
 
 import com.google.gson.reflect.TypeToken;
+import es.edwardbelt.hycraft.HyCraft;
+import es.edwardbelt.hycraft.config.JsonConfig;
 import es.edwardbelt.hycraft.util.GsonUtil;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class MappingLoader {
-    public static Map<String, Object> loadMapping(String fileName) {
-        String path = "/mappings/" + fileName;
+    public static Map<String, Object> loadMapping(JsonConfig jsonConfig) {
+        Type type = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> mappings = GsonUtil.GSON.fromJson(jsonConfig.get(), type);
 
-        try (InputStream inputStream = MappingLoader.class.getResourceAsStream(path)) {
-            if (inputStream == null) {
-                throw new RuntimeException("Mapping file not found: " + path);
-            }
-
-            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            Type type = new TypeToken<Map<String, Object>>(){}.getType();
-            Map<String, Object> mappings = GsonUtil.GSON.fromJson(reader, type);
-
-            if (mappings == null) {
-                throw new RuntimeException("Failed to parse mapping file: " + path);
-            }
-
-            return mappings;
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading mapping file: " + path, e);
+        if (mappings == null) {
+            throw new RuntimeException("Failed to parse mapping file: " + jsonConfig.getPath());
         }
-    }
 
-    public static boolean mappingExists(String fileName) {
-        String path = "/mappings/" + fileName;
-        try (InputStream inputStream = MappingLoader.class.getResourceAsStream(path)) {
-            return inputStream != null;
-        } catch (Exception e) {
-            return false;
-        }
+        return mappings;
     }
 }
