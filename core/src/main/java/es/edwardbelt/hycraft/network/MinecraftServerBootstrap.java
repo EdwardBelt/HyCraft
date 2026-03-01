@@ -1,6 +1,7 @@
 package es.edwardbelt.hycraft.network;
 
 import com.hypixel.hytale.server.core.io.netty.NettyUtil;
+import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.network.handler.minecraft.MinecraftHandlerRegistry;
 import es.edwardbelt.hycraft.network.handler.hytale.HytaleHandlerRegistry;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
@@ -55,7 +56,7 @@ public class MinecraftServerBootstrap {
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .childHandler(new MinecraftChannelInitializer());
 
-            int minecraftPort = 25565;
+            int minecraftPort = HyCraft.get().getConfigManager().getMain().getPort();
             InetSocketAddress bindAddress = new InetSocketAddress(minecraftPort);
 
             ChannelFuture future = mcBootstrap.bind(bindAddress).sync();
@@ -69,6 +70,7 @@ public class MinecraftServerBootstrap {
 
         } catch (Exception e) {
             System.out.println("Failed to start Minecraft listener");
+            System.out.println(e.getMessage());
         }
     }
 
