@@ -13,11 +13,9 @@ Minecraft communicates over TCP, so HyCraft starts a TCP listener that sits betw
 ## Roadmap
 
 - Add a logging system
-- Config files
 - Make swords also work as shields
 - Improve all mappings
 - Refactor inventory manager
-- Add an API
 - Make chest interfaces work with Minecraft guis
 - Texture pack generator
 
