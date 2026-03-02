@@ -7,6 +7,7 @@ import com.hypixel.hytale.server.core.io.netty.NettyUtil;
 import com.hypixel.hytale.server.core.io.netty.PlayerChannelHandler;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.util.Logger;
 import io.netty.channel.*;
 
 import javax.annotation.Nullable;
@@ -74,16 +75,16 @@ public class HytaleChannel extends AbstractChannel {
 
     @Override
     protected void doClose() {
-        System.out.println("trying to close");
+        Logger.DEBUG.log("Trying to close Hytale channel");
         if (closed) {
-            System.out.println("already closed");
+            Logger.DEBUG.log("Channel already closed");
             return;
         }
         closed = true;
 
-        System.out.println("closed");
+        Logger.DEBUG.log("Channel closed");
         if (minecraftChannel.isOpen()) {
-            System.out.println("closing mc as well");
+            Logger.DEBUG.log("Closing MC channel");
             minecraftChannel.close();
         }
     }

@@ -5,6 +5,7 @@ import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.config.Config;
 import es.edwardbelt.hycraft.config.annotation.ConfigProperty;
 import es.edwardbelt.hycraft.config.type.ConfigType;
+import es.edwardbelt.hycraft.util.Logger;
 import es.edwardbelt.hycraft.util.reflection.FieldAccessor;
 import es.edwardbelt.hycraft.util.reflection.Reflections;
 
@@ -65,8 +66,8 @@ public class ConfigFactory<T extends Config> {
 
             return instance;
         } catch (Exception e) {
-            System.out.println("Error creating new instance of config " + clazz.getName());
-            System.out.println(e.getMessage());
+            Logger.ERROR.log("Error creating new instance of config " + clazz.getName());
+            Logger.ERROR.log(e.getMessage());
         }
 
         return null;

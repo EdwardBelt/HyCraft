@@ -5,6 +5,7 @@ import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.network.handler.minecraft.MinecraftHandlerRegistry;
 import es.edwardbelt.hycraft.network.handler.hytale.HytaleHandlerRegistry;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.util.Logger;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import lombok.Getter;
@@ -42,7 +43,7 @@ public class MinecraftServerBootstrap {
 
     public void init() {
         try {
-            System.out.println("Starting TCP listener for mc");
+            Logger.INFO.log("Starting TCP listener for MC");
 
             minecraftBossGroup = NettyUtil.getEventLoopGroup(1, "MC-BossGroup");
             minecraftWorkerGroup = NettyUtil.getEventLoopGroup("MC-WorkerGroup");
@@ -63,14 +64,14 @@ public class MinecraftServerBootstrap {
 
             if (future.isSuccess()) {
                 minecraftListener = future.channel();
-                System.out.println("Minecraft TCP listener started on port " + minecraftPort);
+                Logger.INFO.log("Minecraft TCP listener started on port " + minecraftPort);
             } else {
-                System.out.println("Failed to bind Minecraft listener");
+                Logger.ERROR.log("Failed to bind Minecraft listener");
             }
 
         } catch (Exception e) {
-            System.out.println("Failed to start Minecraft listener");
-            System.out.println(e.getMessage());
+            Logger.ERROR.log("Failed to start Minecraft listener");
+            Logger.ERROR.log(e.getMessage());
         }
     }
 

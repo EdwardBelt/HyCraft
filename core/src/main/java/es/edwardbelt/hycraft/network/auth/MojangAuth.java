@@ -2,6 +2,7 @@ package es.edwardbelt.hycraft.network.auth;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -35,7 +36,7 @@ public class MojangAuth {
 
             return UUID.fromString(formatted);
         } catch (Exception e) {
-            System.err.println("Mojang auth failed for " + username + ": " + e.getMessage());
+            Logger.ERROR.log("Mojang auth failed for " + username + ": " + e.getMessage());
             return null;
         }
     }

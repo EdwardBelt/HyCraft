@@ -3,6 +3,7 @@ package es.edwardbelt.hycraft.mapping.managers;
 import com.google.gson.JsonObject;
 import es.edwardbelt.hycraft.mapping.Mapper;
 import es.edwardbelt.hycraft.util.GsonUtil;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,7 +35,7 @@ public class ItemMapper extends Mapper<String> {
         loadMinecraftData();
 
         if (minecraftData == null) {
-            System.err.println("Failed to load Minecraft data, cannot preload IDs");
+            Logger.ERROR.log("Failed to load Minecraft data, cannot preload IDs");
             return;
         }
 
@@ -48,7 +49,7 @@ public class ItemMapper extends Mapper<String> {
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
-        System.out.println("Pre-loaded " + loaded + "/" + stringIds.size() + " Minecraft item protocol IDs in " + elapsed + "ms");
+        Logger.DEBUG.log("Pre-loaded " + loaded + "/" + stringIds.size() + " Minecraft item protocol IDs in " + elapsed + "ms");
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ItemMapper extends Mapper<String> {
 
         try (InputStream inputStream = getClass().getResourceAsStream(MINECRAFT_DATA_FILE)) {
             if (inputStream == null) {
-                System.err.println("Minecraft data file not found: " + MINECRAFT_DATA_FILE);
+                Logger.ERROR.log("Minecraft data file not found: " + MINECRAFT_DATA_FILE);
                 return;
             }
 
@@ -76,7 +77,7 @@ public class ItemMapper extends Mapper<String> {
             minecraftData = GsonUtil.GSON.fromJson(reader, JsonObject.class);
 
         } catch (Exception e) {
-            System.err.println("Failed to load Minecraft data: " + e.getMessage());
+            Logger.ERROR.log("Failed to load Minecraft data: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -97,7 +98,7 @@ public class ItemMapper extends Mapper<String> {
             return itemData.get("protocol_id").getAsInt();
 
         } catch (Exception e) {
-            System.err.println("Error extracting protocol ID for " + minecraftStringId + ": " + e.getMessage());
+            Logger.ERROR.log("Error extracting protocol ID for " + minecraftStringId + ": " + e.getMessage());
         }
 
         return -1;

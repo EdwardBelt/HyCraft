@@ -10,6 +10,7 @@ import es.edwardbelt.hycraft.protocol.packet.status.PingRequestPacket;
 import es.edwardbelt.hycraft.protocol.packet.status.PingResponsePacket;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusRequestPacket;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusResponsePacket;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -136,7 +137,7 @@ public class PacketRegistry {
         PacketInfo info = PACKETS.get(connectionState).get(packetDirection).get(id);
 
         if (info == null) {
-            System.out.println("Found no packet with ID '" + id + "' and connection state '" + connectionState + "' and packet direction '" + packetDirection + "'");
+            Logger.ERROR.log("Found no packet with ID '" + id + "' and connection state '" + connectionState + "' and packet direction '" + packetDirection + "'");
             return null;
         }
 
@@ -144,7 +145,7 @@ public class PacketRegistry {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            System.out.println("error while creating packet instance");
+            Logger.ERROR.log("Error while creating packet instance");
         }
 
         return null;

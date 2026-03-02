@@ -3,6 +3,7 @@ package es.edwardbelt.hycraft.network.handler.minecraft;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.Packet;
+import es.edwardbelt.hycraft.util.Logger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -18,7 +19,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
         try {
             MinecraftServerBootstrap.get().getMinecraftHandlerRegistry().handlePacket(packet, connection);
         } catch (Exception e) {
-            System.err.println("Error handling packet in state " + connection.getState());
+            Logger.ERROR.log("Error handling packet in state " + connection.getState());
             e.printStackTrace();
             ctx.close();
         }
@@ -26,7 +27,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("MC client disconnected: " + connection.getUsername());
+        Logger.INFO.log("MC client disconnected: " + connection.getUsername());
         MinecraftServerBootstrap.get().removeConnection(connection);
         connection.cleanup();
         ctx.close();
@@ -35,7 +36,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (!(cause instanceof java.nio.channels.ClosedChannelException)) {
-            System.err.println("MC handler exception caught");
+            Logger.ERROR.log("MC handler exception caught");
             cause.printStackTrace();
         }
         MinecraftServerBootstrap.get().removeConnection(connection);

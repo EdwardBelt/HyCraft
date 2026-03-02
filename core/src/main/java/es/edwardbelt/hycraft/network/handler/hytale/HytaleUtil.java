@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.util.MessageUtil;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.ProtocolConstants;
+import es.edwardbelt.hycraft.util.Logger;
 import es.edwardbelt.hycraft.util.reflection.MethodAccessor;
 import es.edwardbelt.hycraft.util.reflection.Reflections;
 import io.netty.buffer.ByteBuf;
@@ -88,7 +89,7 @@ public class HytaleUtil {
             HANDLER_INIT_STAGE_METHOD.invoke(setupHandler, "initial", timeouts.getInitial(), (BooleanSupplier) () -> true);
             setupHandler.registered(null);
         } catch (Exception e) {
-            System.err.println("Failed to create Hytale player for: " + username);
+            Logger.ERROR.log("Failed to create Hytale player for: " + username);
             e.printStackTrace();
             MinecraftServerBootstrap.get().disconnectConnection(connection, "Failed to create Hytale player!");
         }

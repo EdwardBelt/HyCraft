@@ -4,6 +4,7 @@ import es.edwardbelt.hycraft.network.handler.minecraft.data.chunk.Chunk;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.chunk.ChunkCoordIntPair;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.chunk.ChunkSection;
 import es.edwardbelt.hycraft.protocol.packet.play.LevelChunkWithLightPacket;
+import es.edwardbelt.hycraft.util.Logger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +40,7 @@ public class ChunkBuffer {
     }
 
     public void breakSequentialChunkChain(ChunkCoordIntPair chunkCoords) {
-        System.out.println("BROKE SEQUENCE!");
+        Logger.ERROR.log("BROKE CHUNK SEQUENCE CHAIN!");
         chunks.remove(chunkCoords);
         chunksYCoords.remove(chunkCoords);
     }

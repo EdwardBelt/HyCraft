@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import es.edwardbelt.hycraft.mapping.Mapper;
 import es.edwardbelt.hycraft.util.GsonUtil;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,7 +38,7 @@ public class BlockMapper extends Mapper<Integer> {
         loadMinecraftData();
 
         if (minecraftData == null) {
-            System.err.println("Failed to load Minecraft data, cannot preload IDs");
+            Logger.ERROR.log("Failed to load Minecraft data, cannot preload IDs");
             return;
         }
 
@@ -51,7 +52,7 @@ public class BlockMapper extends Mapper<Integer> {
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
-        System.out.println("Pre-loaded " + loaded + "/" + stringIds.size() + " Minecraft block states in " + elapsed + "ms");
+        Logger.INFO.log("Pre-loaded " + loaded + "/" + stringIds.size() + " Minecraft block states in " + elapsed + "ms");
     }
 
     @Override
@@ -71,7 +72,7 @@ public class BlockMapper extends Mapper<Integer> {
 
         try (InputStream inputStream = getClass().getResourceAsStream(MINECRAFT_DATA_FILE)) {
             if (inputStream == null) {
-                System.err.println("Minecraft data file not found: " + MINECRAFT_DATA_FILE);
+                Logger.ERROR.log("Minecraft data file not found: " + MINECRAFT_DATA_FILE);
                 return;
             }
 
@@ -79,7 +80,7 @@ public class BlockMapper extends Mapper<Integer> {
             minecraftData = GsonUtil.GSON.fromJson(reader, JsonObject.class);
 
         } catch (Exception e) {
-            System.err.println("Failed to load Minecraft data: " + e.getMessage());
+            Logger.ERROR.log("Failed to load Minecraft data: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -112,7 +113,7 @@ public class BlockMapper extends Mapper<Integer> {
             }
 
         } catch (Exception e) {
-            System.err.println("Error extracting state ID for " + minecraftStringId + ": " + e.getMessage());
+            Logger.ERROR.log("Error extracting state ID for " + minecraftStringId + ": " + e.getMessage());
         }
 
         return -1;

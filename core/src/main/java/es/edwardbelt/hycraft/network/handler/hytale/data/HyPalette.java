@@ -2,6 +2,7 @@ package es.edwardbelt.hycraft.network.handler.hytale.data;
 
 import com.hypixel.hytale.protocol.packets.world.PaletteType;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
+import es.edwardbelt.hycraft.util.Logger;
 
 public interface HyPalette {
     static HyPalette create(PaletteType type) {
@@ -10,7 +11,7 @@ public interface HyPalette {
             case HalfByte: return new HyHalfBytePalette();
             case Byte: return new HyBytePalette();
             case Short:
-                System.out.println("short palette received");
+                Logger.DEBUG.log("Short palette received");
                 break;
         }
         return null;

@@ -10,4 +10,7 @@ public class MainConfig implements Config {
 
     @ConfigProperty("item_notification")
     private String itemNotification;
+
+    @ConfigProperty("log_debug")
+    private boolean logDebug;
 }

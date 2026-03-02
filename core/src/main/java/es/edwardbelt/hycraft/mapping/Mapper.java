@@ -3,6 +3,7 @@ package es.edwardbelt.hycraft.mapping;
 import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.config.JsonConfig;
 import es.edwardbelt.hycraft.mapping.loader.MappingLoader;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public abstract class Mapper<K> {
             }
 
             if (!neededStringIds.isEmpty()) {
-                System.out.println("Pre-loading " + neededStringIds.size() + " Minecraft mappings...");
+                Logger.INFO.log("Pre-loading " + neededStringIds.size() + " Minecraft mappings...");
                 preloadMappingValueIds(neededStringIds);
             }
 
@@ -57,11 +58,11 @@ public abstract class Mapper<K> {
                 } else if (mappingValue instanceof String stringId) {
                     mappingValueId = getMappingValueId(stringId);
                     if (mappingValueId == -1) {
-                        System.out.println("Invalid value id for " + stringId);
+                        Logger.WARN.log("Invalid value id for " + stringId);
                         continue;
                     }
                 } else {
-                    System.out.println("Unknown value type for " + mappingKey + ": " + mappingValue.getClass().getName());
+                    Logger.WARN.log("Unknown value type for " + mappingKey + ": " + mappingValue.getClass().getName());
                     continue;
                 }
 
@@ -72,19 +73,19 @@ public abstract class Mapper<K> {
 
                 K mappingKeyId = getMappingKeyId(mappingKey);
                 if (mappingKeyId == null) {
-                    System.out.println("Invalid key id for " + mappingKey);
+                    Logger.WARN.log("Invalid key id for " + mappingKey);
                     continue;
                 }
 
                 mappings.put(mappingKeyId, mappingValueId);
             }
 
-            System.out.println("Loaded " + mappings.size() + " block mappings");
+            Logger.INFO.log("Loaded " + mappings.size() + " block mappings");
 
             cleanup();
 
         } catch (Exception e) {
-            System.out.println("Failed to load block mappings: " + e.getMessage());
+            Logger.ERROR.log("Failed to load block mappings: " + e.getMessage());
             e.printStackTrace();
         }
     }

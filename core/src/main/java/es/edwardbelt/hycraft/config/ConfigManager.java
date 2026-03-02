@@ -2,6 +2,7 @@ package es.edwardbelt.hycraft.config;
 
 import es.edwardbelt.hycraft.config.factory.ConfigFactory;
 import es.edwardbelt.hycraft.config.type.ConfigTypeRegistry;
+import es.edwardbelt.hycraft.util.Logger;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class ConfigManager {
     public <T extends Config> void registerFactory(Class<T> configClass) {
         ConfigFactory<T> factory = new ConfigFactory<>(configClass);
         factories.put(configClass, factory);
-        System.out.println("Registered config factory " + configClass.getName());
+        Logger.DEBUG.log("Registered config factory " + configClass.getName());
     }
 
     public <T extends Config> ConfigFactory<T> getFactory(Class<T> configClass) {
