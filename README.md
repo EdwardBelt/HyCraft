@@ -58,12 +58,12 @@ On the first run, a configuration file will be generated at `mods/HyCraft/main.j
 }
 ```
 
-| Option | Description                                                             | Default |
-| :--- |:------------------------------------------------------------------------| :--- |
-| `port` | The TCP port the Minecraft server will listen on.                       | `25565` |
-| `player_prefix` | A string prepended to the username of players connecting via Minecraft. | `"[MC] "` |
-| `item_notification` | Format for action bar messages when receiving items.                    | `...` |
-| `log_debug` | Enables verbose debug logging to diagnose problems.                     | `false` |
+| Option              | Description                                                             | Default |
+|:--------------------|:------------------------------------------------------------------------|:--------|
+| `port`              | The TCP port the Minecraft server will listen on.                       | `25565` |
+| `player_prefix`     | A string prepended to the username of players connecting via Minecraft. | `"."`   |
+| `item_notification` | Format for action bar messages when receiving items.                    | `...`   |
+| `log_debug`         | Enables verbose debug logging to diagnose problems.                     | `false` |
 
 ## Building from Source
 
