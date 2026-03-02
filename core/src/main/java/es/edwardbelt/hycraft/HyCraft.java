@@ -31,12 +31,12 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
 
         this.minecraftServerBootstrap = new MinecraftServerBootstrap();
         this.configManager = new ConfigManager();
-        configManager.reload();
     }
 
     @Override
     protected void setup() {
         HyCraftApi.setInstance(this);
+        configManager.reload();
     }
 
     @Override
