@@ -31,7 +31,6 @@ public class ConfigManager {
     public <T extends Config> void registerFactory(Class<T> configClass) {
         ConfigFactory<T> factory = new ConfigFactory<>(configClass);
         factories.put(configClass, factory);
-        Logger.DEBUG.log("Registered config factory " + configClass.getName());
     }
 
     public <T extends Config> ConfigFactory<T> getFactory(Class<T> configClass) {
