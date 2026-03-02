@@ -1,5 +1,6 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.login;
 
+import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.auth.EncryptionUtil;
 import es.edwardbelt.hycraft.network.auth.MojangAuth;
@@ -36,7 +37,7 @@ public class EncryptionResponseHandler implements PacketHandler<EncryptionRespon
                 return;
             }
 
-            String hytaleUsername = "." + connection.getPendingUsername();
+            String hytaleUsername = HyCraft.get().getConfigManager().getMain().getPlayerPrefix() + connection.getPendingUsername();
 
             MinecraftServerBootstrap.get().setConnection(uuid, connection);
             connection.setUuid(uuid);

@@ -1,4 +1,6 @@
 {
   "port": 25565,
-  "item_notification": "&a+ {quantity} &b{item}"
+  "player_prefix": ".",
+  "item_notification": "&a+ {quantity} &b{item}",
+  "log_debug": false
 }

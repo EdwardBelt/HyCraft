@@ -8,6 +8,9 @@ public class MainConfig implements Config {
     @ConfigProperty("port")
     private int port;
 
+    @ConfigProperty("player_prefix")
+    private String playerPrefix;
+
     @ConfigProperty("item_notification")
     private String itemNotification;
 
