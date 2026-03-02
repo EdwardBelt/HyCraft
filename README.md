@@ -1,6 +1,6 @@
 # HyCraft
 
-**HyCraft** is a Hytale server plugin that acts as a protocol bridge, allowing **Minecraft Java Edition (1.21.10)** clients to connect directly to Hytale servers.
+**HyCraft** is a Hytale server plugin that acts as a protocol bridge, allowing **Minecraft Java Edition (1.21.11)** clients to connect directly to Hytale servers.
 
 It functions by spinning up a parallel TCP server within the Hytale server process. It intercepts incoming Minecraft packets, translates them on-the-fly into Hytale's internal protocol, and forwards them to the game engine. This allows Minecraft players to join Hytale worlds without any client-side modifications.
 
@@ -12,7 +12,7 @@ It functions by spinning up a parallel TCP server within the Hytale server proce
 
 ## Features
 
-*   **Protocol Translation:** Real-time translation between Minecraft 1.21.10 (Protocol 773) and Hytale.
+*   **Protocol Translation:** Real-time translation between Minecraft 1.21.11 (Protocol 773) and Hytale.
 *   **Authentication:** Full Mojang authentication support (Online Mode) via `sessionserver.mojang.com`.
 *   **World Rendering:**
     *   Dynamic chunk conversion (Hytale chunks $\to$ Minecraft chunks).
