@@ -100,5 +100,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-*   **Discord:** `@edwardbelt` or `@iconpippi`
-*   **Community:** [EdwardBelt Discord](https://discord.gg/6XTNSKQAAu) | [Mytale.Online Discord](https://discord.gg/T6YtKBdBX2)
+*   **Discord:** `@edwardbelt`
+*   **Community:** [EdwardBelt Discord](https://discord.gg/6XTNSKQAAu)
