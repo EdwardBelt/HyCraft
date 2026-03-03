@@ -1,5 +1,7 @@
 package es.edwardbelt.hycraft.protocol.packet.configuration;
 
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtCompound;
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtTag;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
 import es.edwardbelt.hycraft.protocol.packet.Packet;
 import lombok.Getter;
@@ -30,20 +32,25 @@ public class RegistryDataPacket implements Packet {
 
         for (RegistryEntry entry : entries) {
             buffer.writeString(entry.id);
-            buffer.writeBoolean(false);
-            /*buffer.writeBoolean(entry.data != null);
+            buffer.writeBoolean(entry.data != null);
 
             if (entry.data != null) {
-                //buffer.writePrefixedOptionalNBT(entry.data);
-            }*/
+                entry.data.write(buffer);
+            }
         }
     }
 
     public static class RegistryEntry {
         public final String id;
+        public final NbtTag data;
+
+        public RegistryEntry(String id, NbtTag nbt) {
+            this.id = id;
+            this.data = nbt;
+        }
 
         public RegistryEntry(String id) {
-            this.id = id;
+            this(id, null);
         }
     }
 
@@ -70,6 +77,9 @@ public class RegistryDataPacket implements Packet {
         packets.add(new RegistryDataPacket("minecraft:cat_variant", createDefaultCatVariants()));
         packets.add(new RegistryDataPacket("minecraft:cow_variant", createDefaultCowVariants()));
         packets.add(new RegistryDataPacket("minecraft:chicken_variant", createDefaultChickenVariants()));
+        packets.add(new RegistryDataPacket("minecraft:zombie_nautilus_variant", createDefaultZombieNautilusVariants()));
+        packets.add(new RegistryDataPacket("minecraft:timeline", createDefaultTimelines()));
+
         //packets.add(new RegistryDataPacket("minecraft:dialog", createDefaultDialogs()));
 
         return packets;
@@ -375,6 +385,31 @@ public class RegistryDataPacket implements Packet {
         for (String variant : variants) {
             entries.add(new RegistryEntry("minecraft:" + variant));
         }
+
+        return entries;
+    }
+
+    private static List<RegistryEntry> createDefaultZombieNautilusVariants() {
+        List<RegistryEntry> entries = new ArrayList<>();
+
+        String[] variants = {
+                "temperate", "warm"
+        };
+
+        for (String variant : variants) {
+            entries.add(new RegistryEntry("minecraft:" + variant));
+        }
+
+        return entries;
+    }
+
+    private static List<RegistryEntry> createDefaultTimelines() {
+        List<RegistryEntry> entries = new ArrayList<>();
+
+        entries.add(new RegistryEntry("minecraft:day"));
+        entries.add(new RegistryEntry("minecraft:early_game"));
+        entries.add(new RegistryEntry("minecraft:moon"));
+        entries.add(new RegistryEntry("minecraft:villager_schedule"));
 
         return entries;
     }

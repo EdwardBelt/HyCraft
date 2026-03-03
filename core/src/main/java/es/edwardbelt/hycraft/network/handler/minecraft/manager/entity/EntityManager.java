@@ -114,7 +114,7 @@ public class EntityManager {
                     }
 
                     if (connection.getHealth() <= 0) {
-                        EntitySoundPacket deathSoundPacket = new EntitySoundPacket(1205, 7, connection.getNetworkId(), 1, 1, 0);
+                        EntitySoundPacket deathSoundPacket = new EntitySoundPacket(1250, 7, connection.getNetworkId(), 1, 1, 0);
                         connection.getChannel().writeAndFlush(deathSoundPacket);
                         PlayerRef playerRef = connection.getPlayerRef();
                         Ref<EntityStore> entityRef = playerRef.getReference();
@@ -216,7 +216,7 @@ public class EntityManager {
                         break;
                     case 5:
                         ItemWithAllMetadata item = ((ItemUpdate) component).item;
-                        entity.setType(70);
+                        entity.setType(71);
                         entity.setItem(ItemStack.fromHytale(item));
                         break;
 
@@ -415,7 +415,7 @@ public class EntityManager {
 
             if (connection.getItemIdsCooldowns().containsKey(itemId)) {
                 if (currentTime < connection.getItemIdsCooldowns().get(itemId)) {
-                    SoundPacket soundPacket = new SoundPacket(1198, 7, targetPos.x, targetPos.y, targetPos.z, 1, 1, 0);
+                    SoundPacket soundPacket = new SoundPacket(1243, 7, targetPos.x, targetPos.y, targetPos.z, 1, 1, 0);
                     connection.getChannel().writeAndFlush(soundPacket);
                     return;
                 };
@@ -434,7 +434,7 @@ public class EntityManager {
 
             result.getInteractionPath().forEach(i -> InteractionManager.get().playInteraction(connection, i, InteractionType.Primary));
 
-            SoundPacket soundPacket = new SoundPacket(1200, 7, targetPos.x, targetPos.y, targetPos.z, 1, 1, 0);
+            SoundPacket soundPacket = new SoundPacket(1245, 7, targetPos.x, targetPos.y, targetPos.z, 1, 1, 0);
             connection.getChannel().writeAndFlush(soundPacket);
 
             DamageCalculator damageCalculator = DAMAGE_CALCULATOR_FIELD.get(damageInteraction);

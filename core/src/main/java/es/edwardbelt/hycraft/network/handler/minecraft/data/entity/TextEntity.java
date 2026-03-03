@@ -7,7 +7,7 @@ import es.edwardbelt.hycraft.network.handler.minecraft.data.entity.metadata.VarI
 public class TextEntity extends Entity {
     public TextEntity(int id) {
         super(id);
-        this.setType(128);
+        this.setType(131);
     }
 
     public void setText(String text) {

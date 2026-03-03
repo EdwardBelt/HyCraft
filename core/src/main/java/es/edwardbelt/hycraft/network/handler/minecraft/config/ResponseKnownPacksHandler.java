@@ -5,13 +5,19 @@ import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.configuration.FinishConfigurationPacket;
 import es.edwardbelt.hycraft.protocol.packet.configuration.RegistryDataPacket;
 import es.edwardbelt.hycraft.protocol.packet.configuration.ResponseKnownPacksPacket;
+import es.edwardbelt.hycraft.protocol.packet.configuration.UpdateTagsPacket;
 
 public class ResponseKnownPacksHandler implements PacketHandler<ResponseKnownPacksPacket> {
     @Override
     public void handle(ResponseKnownPacksPacket packet, ClientConnection connection) {
         for (RegistryDataPacket registryPacket : RegistryDataPacket.DEFAULT_REGISTRIES) {
-            connection.getChannel().writeAndFlush(registryPacket);
+            connection.getChannel().write(registryPacket);
         }
-        connection.getChannel().writeAndFlush(new FinishConfigurationPacket());
+
+        UpdateTagsPacket tagsPacket = UpdateTagsPacket.TAGS_PACKET;
+        connection.getChannel().write(tagsPacket);
+
+        connection.getChannel().write(new FinishConfigurationPacket());
+        connection.getChannel().flush();
     }
 }

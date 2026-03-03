@@ -27,7 +27,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        Logger.INFO.log("MC client disconnected: " + connection.getUsername());
+        if (connection.getUsername() != null) Logger.INFO.log("MC client disconnected: " + connection.getUsername());
         MinecraftServerBootstrap.get().removeConnection(connection);
         connection.cleanup();
         ctx.close();

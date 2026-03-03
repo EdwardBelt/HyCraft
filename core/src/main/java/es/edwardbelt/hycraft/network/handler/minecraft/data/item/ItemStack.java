@@ -63,15 +63,15 @@ public class ItemStack {
     }
 
     public void setCooldown(float seconds, String identifier) {
-        components.put(23, new CooldownComponent(seconds, identifier));
+        components.put(26, new CooldownComponent(seconds, identifier));
     }
 
     public void setCanBlockAttacks() {
-        components.put(33, new BlockAttacksComponent());
+        components.put(37, new BlockAttacksComponent());
     }
 
     public void setName(String name) {
-        components.put(5, new TextComponent(name));
+        components.put(6, new TextComponent(name));
     }
 
     public void setMaxStack(int maxStack) {
@@ -87,7 +87,7 @@ public class ItemStack {
     }
 
     public void setLore(List<String> lore) {
-        components.put(8, new TextListComponent(lore));
+        components.put(11, new TextListComponent(lore));
     }
 
     public void serialize(PacketBuffer buffer) {

@@ -1,17 +1,20 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.data.item.component;
 
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtString;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
 public class TextListComponent implements Component {
-    private List<String> textList;
+    private List<NbtString> textList;
+
+    public TextListComponent(List<String> valueList) {
+        this.textList = valueList.stream().map(NbtString::new).toList();
+    }
 
     @Override
     public void serialize(PacketBuffer buffer) {
         buffer.writeVarInt(textList.size());
-        textList.forEach(buffer::writeNBTStringTag);
+        textList.forEach(text -> text.write(buffer));
     }
 }

@@ -44,6 +44,7 @@ public class PacketRegistry {
         register(3, ConnectionState.CONFIGURATION, PacketDirection.SERVERBOUND, "FinishConfiguration", AckFinishConfigurationPacket.class);
         register(7, ConnectionState.CONFIGURATION, PacketDirection.CLIENTBOUND, "RegistryData", RegistryDataPacket.class);
         register(7, ConnectionState.CONFIGURATION, PacketDirection.SERVERBOUND, "SelectKnownPacks", ResponseKnownPacksPacket.class);
+        register(13, ConnectionState.CONFIGURATION, PacketDirection.CLIENTBOUND, "UpdateTags", UpdateTagsPacket.class);
         register(14, ConnectionState.CONFIGURATION, PacketDirection.CLIENTBOUND, "SelectKnownPacks", SendKnownPacksPacket.class);
 
         // play

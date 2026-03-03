@@ -1,15 +1,18 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.data.entity.metadata;
 
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtString;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class TextMetadataValue implements MetadataValue {
-    private String text;
+    private final NbtString text;
+
+    public TextMetadataValue(String value) {
+        this.text = new NbtString(value);
+    }
 
     @Override
     public void serialize(PacketBuffer buffer) {
-        buffer.writeNBTStringTag(text);
+        text.write(buffer);
     }
 
     @Override

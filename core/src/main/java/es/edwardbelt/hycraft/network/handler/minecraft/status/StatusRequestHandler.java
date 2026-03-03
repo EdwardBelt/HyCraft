@@ -5,6 +5,7 @@ import com.hypixel.hytale.server.core.universe.Universe;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.StatusResponse;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.protocol.ProtocolConstants;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusRequestPacket;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusResponsePacket;
 
@@ -12,8 +13,8 @@ public class StatusRequestHandler implements PacketHandler<StatusRequestPacket> 
     @Override
     public void handle(StatusRequestPacket packet, ClientConnection connection) {
         StatusResponse response = new StatusResponse(
-                "1.21.10",
-                773,
+                ProtocolConstants.MINECRAFT_VERSION,
+                ProtocolConstants.PROTOCOL_VERSION,
                 HytaleServer.get().getConfig().getMaxPlayers(),
                 Universe.get().getPlayerCount(),
                 HytaleServer.get().getConfig().getMotd()
