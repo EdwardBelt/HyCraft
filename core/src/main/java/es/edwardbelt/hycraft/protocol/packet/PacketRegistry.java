@@ -60,7 +60,9 @@ public class PacketRegistry {
         register(12, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "TickEnd", ClientTickEndPacket.class);
         register(16, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "Commands", CommandsPacket.class);
         register(17, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "ContainerClick", ClickContainerPacket.class);
+        register(17, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "CloseContainer", CloseContainerPacket.class);
         register(18, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "ContainerSetContent", SetContainerContentPacket.class);
+        register(18, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "CloseContainer", CloseContainerPacket.class);
         register(22, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "SetCooldown", SetCooldownPacket.class);
         register(25, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "Interact", EntityInteractPacket.class);
         register(27, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "KeepAlive", KeepAliveResponsePacket.class);
@@ -84,6 +86,7 @@ public class PacketRegistry {
         register(52, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "MoveEntityPosRot", MoveAndRotEntityPacket.class);
         register(52, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "SetCarriedSlot", SetCarriedSlotPacket.class);
         register(54, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "MoveEntityRot", RotateEntityPacket.class);
+        register(57, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "OpenScreen", OpenScreenPacket.class);
         register(60, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "SwingArm", SwingArmPacket.class);
         register(62, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "PlayerAbilities", PlayerAbilitiesPacket.class);
         register(63, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "UseItemOn", UseItemOnPacket.class);

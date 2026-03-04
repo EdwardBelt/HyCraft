@@ -274,24 +274,18 @@ public class EntityManager {
                     EntityStatsUpdate entityStatsUpdate = (EntityStatsUpdate) component;
                     EntityStatUpdate[] healthUpdates = entityStatsUpdate.entityStatUpdates.get(DefaultEntityStatTypes.getHealth());
                     if (healthUpdates == null) continue;
-                    float health = entity.getHealth();
 
                     for (EntityStatUpdate statUpdate : healthUpdates) {
                         switch (statUpdate.op) {
-                            case Init, Set -> entity.setHealth(statUpdate.value);
                             case Reset -> {
                                 entity.setHealth(100);
                                 entity.despawn(connection);
                                 entity.spawn(connection);
+                                entity.sendMetadata(connection);
                             }
-                            case Add -> entity.setHealth(health+statUpdate.value);
-                            case Remove -> entity.setHealth(health-statUpdate.value);
                         }
                     }
 
-                    if (entity.getHealth() < 0) entity.setHealth(1); // set health 0 is handled by the animation packet handler
-
-                    entity.sendMetadata(connection);
                     break;
                 case 9:
                     ModelTransform transformUpdate = ((TransformUpdate) component).transform;

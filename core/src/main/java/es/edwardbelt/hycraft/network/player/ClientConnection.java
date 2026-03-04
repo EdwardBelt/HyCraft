@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import es.edwardbelt.hycraft.api.connection.HyCraftConnection;
 import es.edwardbelt.hycraft.api.entity.HyCraftEntity;
+import es.edwardbelt.hycraft.api.gui.HyCraftGui;
 import es.edwardbelt.hycraft.network.auth.CipherDecoder;
 import es.edwardbelt.hycraft.network.auth.CipherEncoder;
 import es.edwardbelt.hycraft.network.auth.EncryptionUtil;
@@ -54,6 +55,9 @@ public class ClientConnection implements HyCraftConnection {
     private Ping pendingPing;
     private int viewDistance;
     private UUID nextWorldRespawn;
+
+    private int windowId;
+    private HyCraftGui openedGui;
 
     private final MovementStates movementStates;
     public AtomicInteger clientChainId;
@@ -97,6 +101,11 @@ public class ClientConnection implements HyCraftConnection {
 
         channel.pipeline().addBefore("mc-frame-decoder", "decrypt", new CipherDecoder(decryptCipher));
         channel.pipeline().addBefore("mc-frame-encoder", "encrypt", new CipherEncoder(encryptCipher));
+    }
+
+    public int getNextWindowId() {
+        if (windowId > 100) windowId = 0;
+        return ++windowId;
     }
 
     public PlayerRef getPlayerRef() {

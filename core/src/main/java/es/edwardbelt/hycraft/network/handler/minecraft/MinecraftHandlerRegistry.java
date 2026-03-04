@@ -60,5 +60,6 @@ public class MinecraftHandlerRegistry extends HandlerRegistry<Packet> {
         addHandler(ChatMessagePacket.class, new ChatMessageReceivedHandler());
         addHandler(ChatCommandPacket.class, new ChatCommandHandler());
         addHandler(EntityInteractPacket.class, new EntityInteractHandler());
+        addHandler(CloseContainerPacket.class, new CloseContainerHandler());
     }
 }

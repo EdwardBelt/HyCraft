@@ -1,5 +1,3 @@
-import java.io.File
-
 plugins {
     `java-library`
     id("com.gradleup.shadow")
@@ -24,23 +22,12 @@ tasks.shadowJar {
     archiveClassifier.set("")
 }
 
-fun getHytaleServerJarLocal(): String {
-    val localDir = file("../lib")
-    if (!localDir.exists()) localDir.mkdirs()
-
-    val hytaleServerJar = File(localDir, "HytaleServer.jar")
-    if (!hytaleServerJar.exists()) {
-        error("Please put a valid HytaleServer.jar in ${localDir.absolutePath}")
-    }
-
-    return hytaleServerJar.absolutePath
-}
-
 dependencies {
     implementation(project(":api"))
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    compileOnly(files(getHytaleServerJarLocal()))
+    val getHytaleServerJar = rootProject.ext["getHytaleServerJar"] as () -> String
+    compileOnly(files(getHytaleServerJar()))
 }

@@ -40,20 +40,31 @@ public class ItemMapper extends Mapper<String> {
         }
 
         int loaded = 0;
-        for (String itemId : stringIds) {
-            int protocolId = extractProtocolId(itemId);
-            if (protocolId != -1) {
-                minecraftProtocolIds.put(itemId, protocolId);
-                loaded++;
+        for (Map.Entry<String, com.google.gson.JsonElement> entry : minecraftData.entrySet()) {
+            String itemId = entry.getKey();
+            try {
+                JsonObject itemData = entry.getValue().getAsJsonObject();
+                if (itemData.has("protocol_id")) {
+                    int protocolId = itemData.get("protocol_id").getAsInt();
+                    minecraftProtocolIds.put(itemId, protocolId);
+
+                    if (itemId.startsWith("minecraft:")) {
+                        minecraftProtocolIds.put(itemId.substring("minecraft:".length()), protocolId);
+                    }
+
+                    loaded++;
+                }
+            } catch (Exception e) {
+                Logger.ERROR.log("Error extracting protocol ID for " + itemId + ": " + e.getMessage());
             }
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
-        Logger.DEBUG.log("Pre-loaded " + loaded + "/" + stringIds.size() + " Minecraft item protocol IDs in " + elapsed + "ms");
+        Logger.DEBUG.log("Pre-loaded " + loaded + "/" + minecraftData.size() + " Minecraft item protocol IDs in " + elapsed + "ms");
     }
 
     @Override
-    protected int getMappingValueId(String minecraftStringId) {
+    public int getMappingValueId(String minecraftStringId) {
         return minecraftProtocolIds.getOrDefault(minecraftStringId, -1);
     }
 

@@ -316,7 +316,7 @@ public class InventoryManager {
     }
 
 
-    private void resyncInventory(ClientConnection connection, Inventory inventory) {
+    public void resyncInventory(ClientConnection connection, Inventory inventory) {
         connection.getHytaleChannel().writeAndFlush(inventory.toPacket());
     }
 

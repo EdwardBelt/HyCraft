@@ -2,7 +2,10 @@ package es.edwardbelt.hycraft.network.handler.minecraft.data.item;
 
 import com.hypixel.hytale.protocol.ItemWithAllMetadata;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
+import es.edwardbelt.hycraft.HyCraft;
+import es.edwardbelt.hycraft.api.gui.HyCraftItemStack;
 import es.edwardbelt.hycraft.mapping.MappingRegistry;
+import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.item.component.*;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
 import es.edwardbelt.hycraft.util.ItemUtil;
@@ -24,6 +27,15 @@ public class ItemStack {
         this.amount = amount;
         this.itemId = itemId;
         this.components = new HashMap<>();
+    }
+
+    public static ItemStack fromApi(HyCraftItemStack apiItem) {
+        String material = apiItem.getMaterial().getId();
+        int materialId = MappingRegistry.get().getItemMapper().getMappingValueId(material);
+        ItemStack item = new ItemStack(apiItem.getAmount(), materialId);
+        if (apiItem.getName() != null) item.setName(apiItem.getName());
+        if (apiItem.getLore() != null) item.setLore(apiItem.getLore());
+        return item;
     }
 
     public static ItemStack fromHytale(ItemWithAllMetadata item) {
