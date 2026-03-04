@@ -63,7 +63,7 @@ public class UUIDUtil {
             String signature = json.getAsJsonArray("properties")
                     .get(0)
                     .getAsJsonObject()
-                    .get("value")
+                    .get("signature")
                     .getAsString();
             if (signature == null) return null;
             return new String[]{skinValue, signature};
