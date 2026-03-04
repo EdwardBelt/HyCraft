@@ -27,7 +27,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        if (connection.getUsername() != null) Logger.INFO.log("MC client disconnected: " + connection.getUsername());
+        if (connection.getUsername() != null) Logger.INFO.log("Minecraft client disconnected: " + connection.getUsername());
         MinecraftServerBootstrap.get().removeConnection(connection);
         connection.cleanup();
         ctx.close();
@@ -36,7 +36,7 @@ public class MainPacketHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (!(cause instanceof java.nio.channels.ClosedChannelException)) {
-            Logger.ERROR.log("MC handler exception caught");
+            Logger.ERROR.log("Minecraft handler exception caught");
             cause.printStackTrace();
         }
         MinecraftServerBootstrap.get().removeConnection(connection);

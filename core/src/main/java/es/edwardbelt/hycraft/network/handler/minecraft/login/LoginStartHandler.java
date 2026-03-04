@@ -5,6 +5,7 @@ import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.login.EncryptionRequestPacket;
 import es.edwardbelt.hycraft.protocol.packet.login.LoginStartPacket;
+import es.edwardbelt.hycraft.util.Logger;
 
 public class LoginStartHandler implements PacketHandler<LoginStartPacket> {
     @Override
@@ -14,7 +15,8 @@ public class LoginStartHandler implements PacketHandler<LoginStartPacket> {
         connection.setUsername(username);
         connection.setPendingUsername(username);
 
-        System.out.println("received minecraft login request from username: " + username);
+        Logger.INFO.log("Received Minecraft login request from player: " + username);
+
 
         byte[] verifyToken = EncryptionUtil.generateVerifyToken();
         connection.setPendingVerifyToken(verifyToken);
