@@ -12,7 +12,7 @@ public class PlaySound2DHandler implements PacketHandler<PlaySoundEvent2D> {
     public void handle(PlaySoundEvent2D packet, ClientConnection connection) {
         int soundId = MappingRegistry.get().getSoundMapper().getMapping(packet.soundEventIndex);
         if (soundId == -1) return;
-        Logger.DEBUG.log("Playing 2D sound " + soundId + " for " connection.getUsername());
+        Logger.DEBUG.log("Playing 2D sound " + soundId + " for " + connection.getUsername());
         EntitySoundPacket soundPacket = new EntitySoundPacket(soundId, 7, connection.getNetworkId(), packet.volumeModifier, packet.pitchModifier, 0);
         connection.getChannel().writeAndFlush(soundPacket);
     }
