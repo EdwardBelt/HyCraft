@@ -11,6 +11,7 @@ import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.login.EncryptionResponsePacket;
 import es.edwardbelt.hycraft.protocol.packet.login.LoginSuccessPacket;
 import es.edwardbelt.hycraft.util.UUIDUtil;
+import es.edwardbelt.hycraft.util.Logger;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class EncryptionResponseHandler implements PacketHandler<EncryptionRespon
             LoginSuccessPacket successPacket = new LoginSuccessPacket(profile);
             connection.getChannel().writeAndFlush(successPacket);
         } catch (Exception e) {
-            System.out.println("error while processing encryption response for username: " + connection.getPendingUsername());
+            Logger.ERROR.log("Error while processing encryption response for " + connection.getPendingUsername());
             MinecraftServerBootstrap.get().disconnectConnection(connection, "Error while encrypting!");
         }
     }

@@ -11,11 +11,6 @@ import es.edwardbelt.hycraft.network.player.ClientConnection;
 public class ServerInfoHandler implements PacketHandler<ServerInfo> {
     @Override
     public void handle(ServerInfo packet, ClientConnection connection) {
-        System.out.println("received serverinfo packet");
-        System.out.println("name: " + packet.serverName);
-        System.out.println("motd: " + packet.motd);
-        System.out.println("max players: " + packet.maxPlayers);
-
         RequestAssets requestAssetsPacket = new RequestAssets(new Asset[0]);
         connection.getHytaleChannel().sendPacket(requestAssetsPacket);
 
