@@ -2,5 +2,9 @@
   "port": 25565,
   "player_prefix": ".",
   "item_notification": "&a+ {quantity} &b{item}",
+  "join_message": [
+    "&3Welcome to the server, &a{username}&3!",
+    "&3You've joined a Hytale server using a Minecraft client. Expect bugs or missing features!"
+  ],
   "log_debug": false
 }

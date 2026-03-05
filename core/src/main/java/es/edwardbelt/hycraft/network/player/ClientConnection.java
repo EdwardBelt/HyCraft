@@ -11,9 +11,11 @@ import com.hypixel.hytale.protocol.packets.player.ClientReady;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
+import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.api.connection.HyCraftConnection;
 import es.edwardbelt.hycraft.api.entity.HyCraftEntity;
 import es.edwardbelt.hycraft.api.gui.HyCraftGui;
+import es.edwardbelt.hycraft.config.ConfigManager;
 import es.edwardbelt.hycraft.network.auth.CipherDecoder;
 import es.edwardbelt.hycraft.network.auth.CipherEncoder;
 import es.edwardbelt.hycraft.network.auth.EncryptionUtil;
@@ -28,6 +30,7 @@ import es.edwardbelt.hycraft.network.handler.minecraft.manager.blockbreak.BlockB
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.inventory.InventoryCursor;
 import es.edwardbelt.hycraft.protocol.ConnectionState;
 import es.edwardbelt.hycraft.protocol.packet.play.*;
+import es.edwardbelt.hycraft.util.MessageUtil;
 import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;
@@ -185,7 +188,11 @@ public class ClientConnection implements HyCraftConnection {
         ClientMovement clientMovementPacket = new ClientMovement(movementStates, null, new Position(x, y, z), direction, direction, null, null, new Vector3d(0, 0, 0), 0, null);
         getHytaleChannel().sendPacket(clientMovementPacket);
 
-        this.initialized = true;
+        if (!initialized) {
+            List<String> message = HyCraft.get().getConfigManager().getMain().getJoinMessage();
+            MessageUtil.send(this, message, "username", username);
+            initialized = true;
+        }
     }
 
     public void checkLastCenterChunk(double x, double z) {

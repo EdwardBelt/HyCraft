@@ -6,6 +6,7 @@ import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.HytaleUtil;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.SystemMessagePacket;
+import es.edwardbelt.hycraft.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,7 @@ public class ServerMessageHandler implements PacketHandler<ServerMessage> {
         List<String> messages = new ArrayList<>();
         buildMessages(messages, packet.message);
 
-        messages.forEach(message -> {
-            if (message.isEmpty()) return;
-            SystemMessagePacket messagePacket = new SystemMessagePacket(message);
-            connection.getChannel().writeAndFlush(messagePacket);
-        });
+        MessageUtil.send(connection, messages);
     }
 
     private void buildMessages(List<String> list, FormattedMessage message) {

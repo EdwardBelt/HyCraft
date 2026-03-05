@@ -9,5 +9,6 @@ import lombok.Getter;
 public class ConfigField {
     private String key;
     private Class<?> type;
+    private final Class<?> genericType;
     private FieldAccessor<?> accessor;
 }

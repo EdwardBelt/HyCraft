@@ -5,11 +5,14 @@ import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.config.Config;
 import es.edwardbelt.hycraft.config.annotation.ConfigProperty;
 import es.edwardbelt.hycraft.config.type.ConfigType;
+import es.edwardbelt.hycraft.config.type.ListType;
 import es.edwardbelt.hycraft.util.Logger;
 import es.edwardbelt.hycraft.util.reflection.FieldAccessor;
 import es.edwardbelt.hycraft.util.reflection.Reflections;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +32,17 @@ public class ConfigFactory<T extends Config> {
 
             String key = field.getAnnotation(ConfigProperty.class).value();
             Class<?> type = field.getType();
+            Class<?> genericType = null;
             FieldAccessor<?> accessor = Reflections.getField(clazz, field.getName());
 
-            ConfigField configField = new ConfigField(key, type, accessor);
+            if (List.class.isAssignableFrom(type)) {
+                Type genType = field.getGenericType();
+                if (genType instanceof ParameterizedType pt) {
+                    genericType = (Class<?>) pt.getActualTypeArguments()[0];
+                }
+            }
+
+            ConfigField configField = new ConfigField(key, type, genericType, accessor);
             fields.add(configField);
         }
     }
@@ -46,7 +57,10 @@ public class ConfigFactory<T extends Config> {
                 Class<?> type = field.getType();
                 FieldAccessor<?> accessor = field.getAccessor();
 
-                if (Config.class.isAssignableFrom(type)) {
+                if (List.class.isAssignableFrom(type)) {
+                    Object value = ListType.read(config.get(key), field.getGenericType());
+                    accessor.set(instance, value);
+                } else if (Config.class.isAssignableFrom(type)) {
                     Class<? extends Config> configClass = (Class<? extends Config>) type;
                     ConfigFactory<?> configFactory = HyCraft.get().getConfigManager().getFactory(configClass);
 
