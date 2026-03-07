@@ -13,6 +13,9 @@ public class MainConfig implements Config {
     @ConfigProperty("player_prefix")
     private String playerPrefix;
 
+    @ConfigProperty("server_icon")
+    private String serverIcon;
+
     @ConfigProperty("item_notification")
     private String itemNotification;
 

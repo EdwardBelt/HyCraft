@@ -9,11 +9,13 @@ public class StatusResponse {
     private Version version;
     private Players players;
     private String description;
+    private String favicon;
 
-    public StatusResponse(String version, int protocol, int max, int online, String description) {
+    public StatusResponse(String version, int protocol, int max, int online, String description, String favicon) {
         this.version = new Version(version, protocol);
         this.players = new Players(max, online);
         this.description = description;
+        this.favicon = favicon;
     }
 
     @AllArgsConstructor

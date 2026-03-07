@@ -6,5 +6,6 @@
     "&3Welcome to the server, &a{username}&3!",
     "&3You've joined a Hytale server using a Minecraft client. Expect bugs or missing features!"
   ],
-  "log_debug": false
+  "log_debug": false,
+  "server_icon": "icon.png"
 }
