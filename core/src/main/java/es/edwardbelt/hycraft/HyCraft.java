@@ -44,17 +44,17 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     protected void setup() {
         HyCraftApi.setInstance(this);
         configManager.reload();
-    }
 
-    @Override
-    protected void start() {
         String serverIconPath = getConfigManager().getMain().getServerIcon();
         try {
             ServerIconUtil.loadServerIcon(new File(HyCraft.PATH, serverIconPath));
         } catch (IOException e) {
             Logger.WARN.log("Could not load Minecraft server icon " + serverIconPath);
         }
+    }
 
+    @Override
+    protected void start() {
         MappingRegistry.init();
         minecraftServerBootstrap.init();
     }
