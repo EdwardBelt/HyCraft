@@ -49,21 +49,13 @@ It functions by spinning up a parallel TCP server within the Hytale server proce
 
 On the first run, a configuration file will be generated at `mods/HyCraft/main.json`.
 
-```json
-{
-  "port": 25565,
-  "player_prefix": ".",
-  "item_notification": "&a+ {quantity} {item}",
-  "log_debug": false
-}
-```
-
-| Option              | Description                                                             | Default |
-|:--------------------|:------------------------------------------------------------------------|:--------|
-| `port`              | The TCP port the Minecraft server will listen on.                       | `25565` |
-| `player_prefix`     | A string prepended to the username of players connecting via Minecraft. | `"."`   |
-| `item_notification` | Format for action bar messages when receiving items.                    | `...`   |
-| `log_debug`         | Enables verbose debug logging to diagnose problems.                     | `false` |
+| Option              | Description                                                                          | Default    |
+|:--------------------|:-------------------------------------------------------------------------------------|:-----------|
+| `port`              | The TCP port the Minecraft server will listen on.                                    | `25565`    |
+| `player_prefix`     | A string prepended to the username of players connecting via Minecraft.              | `"."`      |
+| `item_notification` | Format for action bar messages when receiving items.                                 | `...`      |
+| `log_debug`         | Enables verbose debug logging to diagnose problems.                                  | `false`    |
+| `server_icon`       | The MC server icon file path, relative to the HyCraft directory (must be 64x64 PNG). | `icon.png` |
 
 ## Building from Source
 

@@ -8,6 +8,7 @@ import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.ProtocolConstants;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusRequestPacket;
 import es.edwardbelt.hycraft.protocol.packet.status.StatusResponsePacket;
+import es.edwardbelt.hycraft.util.ServerIconUtil;
 
 public class StatusRequestHandler implements PacketHandler<StatusRequestPacket> {
     @Override
@@ -17,7 +18,8 @@ public class StatusRequestHandler implements PacketHandler<StatusRequestPacket> 
                 ProtocolConstants.PROTOCOL_VERSION,
                 HytaleServer.get().getConfig().getMaxPlayers(),
                 Universe.get().getPlayerCount(),
-                HytaleServer.get().getConfig().getMotd()
+                HytaleServer.get().getConfig().getMotd(),
+                "data:image/png;base64," + ServerIconUtil.getServerIconBase64()
         );
         StatusResponsePacket responsePacket = new StatusResponsePacket(response);
         connection.getChannel().writeAndFlush(responsePacket);

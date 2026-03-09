@@ -12,9 +12,13 @@ import es.edwardbelt.hycraft.mapping.MappingRegistry;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.gui.GuiManager;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.util.Logger;
+import es.edwardbelt.hycraft.util.ServerIconUtil;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -40,6 +44,13 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     protected void setup() {
         HyCraftApi.setInstance(this);
         configManager.reload();
+
+        String serverIconPath = getConfigManager().getMain().getServerIcon();
+        try {
+            ServerIconUtil.loadServerIcon(new File(HyCraft.PATH, serverIconPath));
+        } catch (IOException e) {
+            Logger.WARN.log("Could not load Minecraft server icon " + serverIconPath);
+        }
     }
 
     @Override
