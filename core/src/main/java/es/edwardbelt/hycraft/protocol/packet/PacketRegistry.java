@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class PacketRegistry {
     private static final Map<ConnectionState, Map<PacketDirection, Map<Integer, PacketInfo>>> PACKETS = new HashMap<>();
-    private static final Map<Class<? extends Packet>, Integer> PACKETS_BY_TYPE = new HashMap<>();
+    private static final Map<Class<? extends Packet>, Map<PacketDirection, Integer>> PACKETS_BY_TYPE = new HashMap<>();
 
     static {
         // handshake
@@ -126,12 +126,16 @@ public class PacketRegistry {
         } else {
             PacketInfo info = new PacketInfo(id, connectionState, packetDirection, name, type);
             PACKETS.get(connectionState).get(packetDirection).put(id, info);
-            PACKETS_BY_TYPE.put(info.packet, info.id);
+            PACKETS_BY_TYPE
+                    .computeIfAbsent(info.packet, k -> new HashMap<>())
+                    .put(packetDirection, info.id);
         }
     }
 
-    public static Integer getPacketByType(Class<? extends Packet> clazz) {
-        return PACKETS_BY_TYPE.get(clazz);
+    public static Integer getPacketByType(Class<? extends Packet> clazz, PacketDirection direction) {
+        Map<PacketDirection, Integer> dirMap = PACKETS_BY_TYPE.get(clazz);
+        if (dirMap == null) return null;
+        return dirMap.get(direction);
     }
 
     public static Packet createPacket(int id, ConnectionState connectionState, PacketDirection packetDirection) {
