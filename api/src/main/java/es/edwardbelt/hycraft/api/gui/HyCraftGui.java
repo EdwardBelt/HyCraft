@@ -22,10 +22,6 @@ public abstract class HyCraftGui {
         items.put(slot, item);
     }
 
-    public boolean blockItemUpdates() {
-        return true;
-    }
-
-    public abstract void onClick(HyCraftConnection connection, int slot, HyCraftClickType clickType);
+    public abstract boolean onClick(HyCraftConnection connection, int slot, HyCraftClickType clickType);
     public abstract void onClose(HyCraftConnection connection);
 }

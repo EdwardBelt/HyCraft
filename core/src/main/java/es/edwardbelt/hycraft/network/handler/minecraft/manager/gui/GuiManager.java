@@ -4,6 +4,7 @@ import com.hypixel.hytale.server.core.inventory.Inventory;
 import es.edwardbelt.hycraft.api.gui.HyCraftClickType;
 import es.edwardbelt.hycraft.api.gui.HyCraftGui;
 import es.edwardbelt.hycraft.api.gui.HyCraftItemStack;
+import es.edwardbelt.hycraft.network.handler.hytale.manager.window.ContainerGui;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.item.ItemStack;
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.inventory.InventoryManager;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
@@ -41,14 +42,22 @@ public class GuiManager {
     }
 
     public void onCloseGui(ClientConnection connection) {
+        onCloseGui(connection, true);
+    }
+
+    public void onCloseGui(ClientConnection connection, boolean triggerOnClose) {
         HyCraftGui gui = connection.getOpenedGui();
         if (gui == null) return;
-        gui.onClose(connection);
+        if (triggerOnClose) gui.onClose(connection);
         connection.setOpenedGui(null);
     }
 
     public void closeGui(ClientConnection connection) {
-        onCloseGui(connection);
+        closeGui(connection, true);
+    }
+
+    public void closeGui(ClientConnection connection, boolean triggerOnClose) {
+        onCloseGui(connection, triggerOnClose);
         CloseContainerPacket packet = new CloseContainerPacket(0);
         connection.getChannel().writeAndFlush(packet);
     }
@@ -62,14 +71,17 @@ public class GuiManager {
         }
 
         HyCraftClickType clickType = getClickType(mode, button);
+        boolean cancel = gui.onClick(connection, slot, clickType);
 
-        if (gui.blockItemUpdates() || clickType == null) {
+        if (cancel) {
             InventoryManager.get().resyncInventory(connection, inventory);
             updateGui(connection, gui);
-            if (clickType == null) return;
+            return;
         }
 
-        gui.onClick(connection, slot, clickType);
+        if (gui instanceof ContainerGui container) {
+            InventoryManager.get().handleContainerClick(connection, inventory, (short) slot, (byte) button, mode, container.getId(), container.getGuiSlotCount());
+        }
     }
 
     public HyCraftGui getOpenedGui(ClientConnection connection) {
@@ -103,11 +115,10 @@ public class GuiManager {
             return new ArrayList<>();
         }
 
-        int min = Collections.min(items.keySet());
         int max = Collections.max(items.keySet());
 
         List<ItemStack> list = new ArrayList<>();
-        for (int i = min; i <= max; i++) {
+        for (int i = 0; i <= max; i++) {
             HyCraftItemStack apiItem = items.get(i);
             ItemStack item = apiItem != null ? ItemStack.fromApi(apiItem) : ItemStack.EMPTY;
             list.add(item);

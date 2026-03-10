@@ -1,6 +1,7 @@
 package es.edwardbelt.hycraft.protocol.codec;
 
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.protocol.PacketDirection;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
 import es.edwardbelt.hycraft.protocol.packet.Packet;
 import es.edwardbelt.hycraft.protocol.packet.PacketRegistry;
@@ -17,7 +18,7 @@ public class MinecraftPacketEncoder extends MessageToByteEncoder<Packet> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) {
-        Integer packetId = PacketRegistry.getPacketByType(packet.getClass());
+        Integer packetId = PacketRegistry.getPacketByType(packet.getClass(), PacketDirection.CLIENTBOUND);
 
         if (packetId == null) {
             throw new RuntimeException(

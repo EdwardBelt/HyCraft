@@ -8,6 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 public class HyCraftItemStack {
+    public static final HyCraftItemStack EMPTY = new HyCraftItemStack(0, HyCraftMaterial.AIR);
+
     private int amount;
     private HyCraftMaterial material;
     private String name;

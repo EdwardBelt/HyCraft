@@ -45,6 +45,28 @@ public class InventoryManager {
         }
     }
 
+    public void handleContainerClick(ClientConnection connection, Inventory inventory, short slot, byte button, ClickContainerPacket.Mode mode, int containerId, int guiSlotCount) {
+        if (mode.equals(ClickContainerPacket.Mode.DRAG)) {
+            if (slot == -999) return;
+            mode = ClickContainerPacket.Mode.NORMAL_CLICK;
+            if (button == 1) button = 0;
+            else if (button == 5) button = 1;
+        }
+
+        if (slot == -999) {
+            handleClickOutside(connection, inventory);
+            return;
+        }
+
+        switch (mode) {
+            case NORMAL_CLICK -> handleNormalClick(connection, inventory, slot, button, containerId, guiSlotCount);
+            case SHIFT_CLICK -> handleShiftClick(connection, inventory, slot, containerId, guiSlotCount);
+            case NUMBER_KEY -> handleNumberKey(connection, inventory, slot, button, containerId, guiSlotCount);
+            case DROP -> handleDrop(connection, inventory, slot, button, containerId, guiSlotCount);
+            case DOUBLE_CLICK -> handleDoubleClick(connection, inventory, slot, containerId, guiSlotCount);
+        }
+    }
+
     private void handleClickOutside(ClientConnection connection, Inventory inventory) {
         InventoryCursor cursor = connection.getCursor();
         if (cursor.heldItem == null) return;
@@ -315,6 +337,126 @@ public class InventoryManager {
         connection.getHytaleChannel().sendPacket(packet);
     }
 
+    private void handleNormalClick(ClientConnection connection, Inventory inventory, short mcSlot, byte button, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) {
+            resyncInventory(connection, inventory);
+            return;
+        }
+
+        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (button == 0) {
+            handleLeftClick(connection, mcSlot, hytaleSlot, slotItem);
+        } else if (button == 1) {
+            handleRightClick(connection, mcSlot, hytaleSlot, slotItem);
+        }
+    }
+
+    private void handleShiftClick(ClientConnection connection, Inventory inventory, short mcSlot, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) return;
+
+        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (slotItem == null || slotItem.isEmpty()) return;
+
+        SmartMoveItemStack smartMove = new SmartMoveItemStack(
+                hytaleSlot.sectionId,
+                hytaleSlot.slotId,
+                slotItem.getQuantity(),
+                SmartMoveType.PutInHotbarOrWindow
+        );
+        connection.getHytaleChannel().sendPacket(smartMove);
+    }
+
+    private void handleNumberKey(ClientConnection connection, Inventory inventory, short mcSlot, byte button, int containerId, int guiSlotCount) {
+        InventoryCursor cursor = connection.getCursor();
+        if (button < 0 || button > 8) return;
+
+        HytaleSlot clickedSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (clickedSlot == null) return;
+
+        HytaleSlot hotbarSlot = new HytaleSlot(-1, button);
+
+        ItemContainer clickedContainer = inventory.getSectionById(clickedSlot.sectionId);
+        ItemContainer hotbarContainer = inventory.getSectionById(hotbarSlot.sectionId);
+
+        if (clickedContainer == null || hotbarContainer == null) return;
+
+        ItemStack clickedItem = clickedContainer.getItemStack((short) clickedSlot.slotId);
+        ItemStack hotbarItem = hotbarContainer.getItemStack((short) hotbarSlot.slotId);
+
+        boolean clickedEmpty = isHytaleItemEmpty(clickedItem);
+        boolean hotbarEmpty = isHytaleItemEmpty(hotbarItem);
+
+        if (!clickedEmpty) {
+            MoveItemStack move1 = new MoveItemStack(
+                    clickedSlot.sectionId, clickedSlot.slotId,
+                    clickedItem.getQuantity(),
+                    hotbarSlot.sectionId, hotbarSlot.slotId
+            );
+            connection.getHytaleChannel().sendPacket(move1);
+        } else if (!hotbarEmpty) {
+            MoveItemStack move = new MoveItemStack(
+                    hotbarSlot.sectionId, hotbarSlot.slotId,
+                    hotbarItem.getQuantity(),
+                    clickedSlot.sectionId, clickedSlot.slotId
+            );
+            connection.getHytaleChannel().sendPacket(move);
+        }
+
+        cursor.heldItem = null;
+    }
+
+    private void handleDoubleClick(ClientConnection connection, Inventory inventory, short mcSlot, int containerId, int guiSlotCount) {
+        InventoryCursor cursor = connection.getCursor();
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) return;
+
+        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (isHytaleItemEmpty(slotItem)) return;
+
+        SmartMoveItemStack smartMove = new SmartMoveItemStack(
+                hytaleSlot.sectionId,
+                hytaleSlot.slotId,
+                slotItem.getQuantity(),
+                SmartMoveType.EquipOrMergeStack
+        );
+        connection.getHytaleChannel().sendPacket(smartMove);
+
+        cursor.heldItem = null;
+    }
+
+    private void handleDrop(ClientConnection connection, Inventory inventory, short mcSlot, int button, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) {
+            resyncInventory(connection, inventory);
+            return;
+        }
+
+        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack item = container.getItemStack((short) hytaleSlot.slotId);
+        if (item == null || item.isEmpty()) {
+            resyncInventory(connection, inventory);
+            return;
+        }
+
+        int quantity = button == 0 ? 1 : item.getQuantity();
+
+        DropItemStack packet = new DropItemStack(hytaleSlot.sectionId, hytaleSlot.slotId, quantity);
+        connection.getHytaleChannel().sendPacket(packet);
+    }
 
     public void resyncInventory(ClientConnection connection, Inventory inventory) {
         connection.getHytaleChannel().writeAndFlush(inventory.toPacket());
@@ -331,6 +473,20 @@ public class InventoryManager {
             return new HytaleSlot(-1, mcSlot - 36);
         } else if (mcSlot == 45) {
             return new HytaleSlot(-5, 0);
+        }
+        return null;
+    }
+
+    private HytaleSlot mcSlotToHytale(short mcSlot, int containerId, int guiSlotCount) {
+        if (mcSlot >= 0 && mcSlot < guiSlotCount) {
+            return new HytaleSlot(containerId, mcSlot);
+        }
+        int offset = mcSlot - guiSlotCount;
+        if (offset >= 0 && offset <= 26) {
+            return new HytaleSlot(-2, offset);
+        }
+        if (offset >= 27 && offset <= 35) {
+            return new HytaleSlot(-1, offset - 27);
         }
         return null;
     }

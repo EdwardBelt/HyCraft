@@ -11,6 +11,9 @@ import com.hypixel.hytale.protocol.packets.interface_.*;
 import com.hypixel.hytale.protocol.packets.inventory.SetActiveSlot;
 import com.hypixel.hytale.protocol.packets.inventory.UpdatePlayerInventory;
 import com.hypixel.hytale.protocol.packets.player.*;
+import com.hypixel.hytale.protocol.packets.window.CloseWindow;
+import com.hypixel.hytale.protocol.packets.window.OpenWindow;
+import com.hypixel.hytale.protocol.packets.window.UpdateWindow;
 import com.hypixel.hytale.protocol.packets.world.*;
 import es.edwardbelt.hycraft.network.handler.HandlerRegistry;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
@@ -27,6 +30,9 @@ import es.edwardbelt.hycraft.network.handler.hytale.inventory.UpdatePlayerInvent
 import es.edwardbelt.hycraft.network.handler.hytale.player.ClientTeleportHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.player.SetGameModeHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.player.SetMovementStatesHandler;
+import es.edwardbelt.hycraft.network.handler.hytale.window.CloseWindowHandler;
+import es.edwardbelt.hycraft.network.handler.hytale.window.OpenWindowHandler;
+import es.edwardbelt.hycraft.network.handler.hytale.window.UpdateWindowHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.world.*;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 
@@ -76,6 +82,11 @@ public class HytaleHandlerRegistry extends HandlerRegistry<Packet> {
         this.addHandler(PlaySoundEvent2D.class, new PlaySound2DHandler());
         this.addHandler(PlaySoundEvent3D.class, new PlaySound3DHandler());
         this.addHandler(SpawnParticleSystem.class, new SpawnParticleHandler());
+
+        // window
+        this.addHandler(OpenWindow.class, new OpenWindowHandler());
+        this.addHandler(UpdateWindow.class, new UpdateWindowHandler());
+        this.addHandler(CloseWindow.class, new CloseWindowHandler());
     }
 
     @SuppressWarnings("unchecked")

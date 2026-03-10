@@ -16,6 +16,7 @@ public class ItemMapper extends Mapper<String> {
     private static final String MINECRAFT_DATA_FILE = "/mappings/items_minecraft_data.json";
 
     private final Map<String, Integer> minecraftProtocolIds = new HashMap<>();
+    private final Map<Integer, String> protocolIdsToKeys = new HashMap<>();
 
     private JsonObject minecraftData = null;
 
@@ -45,12 +46,11 @@ public class ItemMapper extends Mapper<String> {
             try {
                 JsonObject itemData = entry.getValue().getAsJsonObject();
                 if (itemData.has("protocol_id")) {
+                    String key = itemId.substring("minecraft:".length());
                     int protocolId = itemData.get("protocol_id").getAsInt();
-                    minecraftProtocolIds.put(itemId, protocolId);
 
-                    if (itemId.startsWith("minecraft:")) {
-                        minecraftProtocolIds.put(itemId.substring("minecraft:".length()), protocolId);
-                    }
+                    minecraftProtocolIds.put(key, protocolId);
+                    protocolIdsToKeys.put(protocolId, key);
 
                     loaded++;
                 }
@@ -66,6 +66,10 @@ public class ItemMapper extends Mapper<String> {
     @Override
     public int getMappingValueId(String minecraftStringId) {
         return minecraftProtocolIds.getOrDefault(minecraftStringId, -1);
+    }
+
+    public String getMappingKeyById(int id) {
+        return protocolIdsToKeys.get(id);
     }
 
     @Override

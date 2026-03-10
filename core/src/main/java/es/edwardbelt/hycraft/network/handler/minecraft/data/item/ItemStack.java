@@ -4,6 +4,7 @@ import com.hypixel.hytale.protocol.ItemWithAllMetadata;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import es.edwardbelt.hycraft.HyCraft;
 import es.edwardbelt.hycraft.api.gui.HyCraftItemStack;
+import es.edwardbelt.hycraft.api.gui.HyCraftMaterial;
 import es.edwardbelt.hycraft.mapping.MappingRegistry;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.item.component.*;
@@ -66,6 +67,39 @@ public class ItemStack {
             itemStack.setMaxDamage((int) item.maxDurability);
             itemStack.setDamage((int) (item.maxDurability-item.durability));
         }
+
+        return itemStack;
+    }
+
+    public static HyCraftItemStack fromHytaleToApi(ItemWithAllMetadata item) {
+        int itemId = MappingRegistry.get().getItemMapper().getMapping(item.itemId);
+        String itemStrId = MappingRegistry.get().getItemMapper().getMappingKeyById(itemId);
+        Item itemConfig = ItemUtil.getItemConfig(item.itemId);
+        if (itemConfig == null) return HyCraftItemStack.EMPTY;
+
+        String name = LanguageUtil.getMessage(itemConfig.getTranslationProperties().getName());
+        String desc = LanguageUtil.getMessage(itemConfig.getTranslationProperties().getDescription());
+
+        List<String> lore = new ArrayList<>();
+        lore.add("§8ID: " + item.itemId);
+
+        if (desc != null) {
+            lore.add("§r");
+            lore.addAll(ItemUtil.hytaleItemDescToList(desc));
+        }
+
+        int maxStack = itemConfig.getMaxStack();
+        if (maxStack > 99) maxStack = 99;
+
+        HyCraftItemStack itemStack = new HyCraftItemStack(item.quantity, HyCraftMaterial.fromId(itemStrId));
+        itemStack.setName("§f"+name);
+        //itemStack.setMaxStack(maxStack);
+        itemStack.setLore(lore);
+
+        /*if (item.maxDurability > 0) {
+            itemStack.setMaxDamage((int) item.maxDurability);
+            itemStack.setDamage((int) (item.maxDurability-item.durability));
+        }*/
 
         return itemStack;
     }
