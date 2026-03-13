@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Goal {
-    public static final long TICK_TIME = 25;
+    public static final long TICK_TIME = 1000 / es.edwardbelt.hycraft.util.TickConverter.getHytaleTPS();
 
     private ScheduledFuture task;
     @Setter

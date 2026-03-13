@@ -34,9 +34,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
 
-    val getHytaleServerJar = rootProject.ext["getHytaleServerJar"] as () -> String
-    compileOnly(files(getHytaleServerJar()))
+    compileOnly("com.hypixel.hytale:Server:2026.02.19-1a311a592")
 
-    implementation("net.bytebuddy:byte-buddy:1.18.7")
-    implementation("net.bytebuddy:byte-buddy-agent:1.18.7")
+    compileOnly(libs.mixin)
+    compileOnly(libs.mixinextras)
+    annotationProcessor(libs.mixin)
+    annotationProcessor(libs.mixinextras)
 }
