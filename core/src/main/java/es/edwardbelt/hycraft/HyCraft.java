@@ -10,9 +10,10 @@ import es.edwardbelt.hycraft.mapping.MappingRegistry;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.gui.GuiManager;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
-import es.edwardbelt.hycraft.patches.PatchHelper;
 import es.edwardbelt.hycraft.util.Logger;
 import es.edwardbelt.hycraft.util.ServerIconUtil;
+import es.edwardbelt.hycraft.util.TickConverter;
+import es.edwardbelt.hycraft.util.TickRateDetector;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -30,21 +31,22 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     private final MinecraftServerBootstrap minecraftServerBootstrap;
     @Getter
     private final ConfigManager configManager;
+    private final TickRateDetector tickRateDetector;
+    private java.util.concurrent.ScheduledFuture<?> tpsDetectionTask;
 
     public HyCraft(@Nonnull JavaPluginInit init) {
         super(init);
         INSTANCE = this;
-        PatchHelper.init();
 
         this.minecraftServerBootstrap = new MinecraftServerBootstrap();
         this.configManager = new ConfigManager();
+        this.tickRateDetector = new TickRateDetector();
     }
 
     @Override
     protected void setup() {
         HyCraftApi.setInstance(this);
         configManager.reload();
-        PatchHelper.apply();
 
         String serverIconPath = getConfigManager().getMain().getServerIcon();
         try {
@@ -58,10 +60,29 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     protected void start() {
         MappingRegistry.init();
         minecraftServerBootstrap.init();
+        startTpsDetection();
+    }
+
+    private void startTpsDetection() {
+        tpsDetectionTask = com.hypixel.hytale.server.core.HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> {
+            tickRateDetector.onTick();
+
+            if (tickRateDetector.isCalibrated()) {
+                int detectedTPS = tickRateDetector.getDetectedTPS();
+                if (detectedTPS != TickConverter.getHytaleTPS()) {
+                    TickConverter.setHytaleTPS(detectedTPS);
+                    Logger.DEBUG.log("Detected Hytale TPS: " + detectedTPS + " (avg tick: " +
+                        String.format("%.2f", tickRateDetector.getAvgTickTimeMs()) + "ms)");
+                }
+            }
+        }, 0, 1000 / TickConverter.getHytaleTPS(), java.util.concurrent.TimeUnit.MILLISECONDS);
     }
 
     @Override
     protected void shutdown() {
+        if (tpsDetectionTask != null) {
+            tpsDetectionTask.cancel(false);
+        }
         minecraftServerBootstrap.shutdown();
     }
 

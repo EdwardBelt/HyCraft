@@ -4,6 +4,8 @@ lib/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+.class
+.jar
 
 ### IntelliJ IDEA ###
 .idea/
@@ -40,3 +42,4 @@ build/
 
 # Ignore Gradle build output directory
 build
+bin/

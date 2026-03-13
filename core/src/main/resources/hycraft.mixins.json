@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "es.edwardbelt.hycraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinProfileServiceClient",
+    "MixinInteractionManager"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

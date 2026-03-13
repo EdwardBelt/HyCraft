@@ -418,7 +418,7 @@ public class EntityManager {
             long invalidUntil = currentTime + (long) (cooldown * 1000);
             connection.getItemIdsCooldowns().put(itemId, invalidUntil);
 
-            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+inventory.getActiveHotbarSlot(), (int)(cooldown*20));
+            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+inventory.getActiveHotbarSlot(), es.edwardbelt.hycraft.util.TickConverter.secondsToMinecraftTicks(cooldown));
             connection.getChannel().writeAndFlush(cooldownPacket);
 
             InteractionExtractorResponse result = InteractionManager.get().extract(new InteractionContext(connection, interactionVars), mainInteraction);
