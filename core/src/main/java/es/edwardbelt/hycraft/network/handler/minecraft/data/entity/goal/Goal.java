@@ -3,6 +3,7 @@ package es.edwardbelt.hycraft.network.handler.minecraft.data.entity.goal;
 import com.hypixel.hytale.server.core.HytaleServer;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.entity.Entity;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.util.TickUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Goal {
-    public static final long TICK_TIME = 1000 / es.edwardbelt.hycraft.util.TickConverter.getHytaleTPS();
+    public static final long TICK_TIME = 1000 / TickUtil.getHytaleTPS();
 
     private ScheduledFuture task;
     @Setter

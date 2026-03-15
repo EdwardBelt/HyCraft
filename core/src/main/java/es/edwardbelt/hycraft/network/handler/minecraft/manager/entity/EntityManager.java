@@ -8,6 +8,7 @@ import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
+import es.edwardbelt.hycraft.util.TickUtil;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.knockback.KnockbackComponent;
 import com.hypixel.hytale.server.core.inventory.Inventory;
@@ -277,6 +278,10 @@ public class EntityManager {
 
                     for (EntityStatUpdate statUpdate : healthUpdates) {
                         switch (statUpdate.op) {
+                            case Remove, Add -> {
+                                HurtAnimationPacket hurtPacket = new HurtAnimationPacket(entityId, 0);
+                                connection.getChannel().writeAndFlush(hurtPacket);
+                            }
                             case Reset -> {
                                 entity.setHealth(100);
                                 entity.despawn(connection);
@@ -382,9 +387,11 @@ public class EntityManager {
         World world = entityStore.getExternalData().getWorld();
         Ref<EntityStore> targetRef = entityStore.getExternalData().getRefFromNetworkId(entityId);
 
-        if (targetRef == null || !attackerRef.isValid() || !targetRef.isValid()) return;
+        if (targetRef == null) return;
 
         world.execute(() -> {
+            if (!attackerRef.isValid() || !targetRef.isValid()) return;
+
             LivingEntity playerEntity = entityStore.getComponent(attackerRef, Player.getComponentType());
             Vector3d attackerPos = entityStore.getComponent(attackerRef, TransformComponent.getComponentType()).getPosition();
             Vector3d targetPos = entityStore.getComponent(targetRef, TransformComponent.getComponentType()).getPosition();
@@ -396,7 +403,7 @@ public class EntityManager {
 
             Map<String, String> interactionVars = item != null ? item.getInteractionVars() : new HashMap<>();
 
-            String interactionId = item != null ? item.getInteractions().get(InteractionType.Primary) : "*Empty_Interactions_Primary";
+            String interactionId = item != null ? item.getInteractions().get(InteractionType.Primary) : "Unarmed_Attack";
             if (interactionId == null) return;
 
             RootInteraction rootInteraction = RootInteraction.getAssetMap().getAsset(interactionId);
@@ -418,7 +425,7 @@ public class EntityManager {
             long invalidUntil = currentTime + (long) (cooldown * 1000);
             connection.getItemIdsCooldowns().put(itemId, invalidUntil);
 
-            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+inventory.getActiveHotbarSlot(), es.edwardbelt.hycraft.util.TickConverter.secondsToMinecraftTicks(cooldown));
+            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+inventory.getActiveHotbarSlot(), TickUtil.secondsToMinecraftTicks(cooldown));
             connection.getChannel().writeAndFlush(cooldownPacket);
 
             InteractionExtractorResponse result = InteractionManager.get().extract(new InteractionContext(connection, interactionVars), mainInteraction);

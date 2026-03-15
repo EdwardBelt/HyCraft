@@ -8,7 +8,8 @@ import es.edwardbelt.hycraft.protocol.packet.play.EntityInteractPacket;
 public class EntityInteractHandler implements PacketHandler<EntityInteractPacket> {
     @Override
     public void handle(EntityInteractPacket packet, ClientConnection connection) {
-        if (!packet.getType().equals(EntityInteractPacket.Type.ATTACK)) return;
-        EntityManager.get().hitEntity(connection, packet.getEntityId());
+        if (packet.getType() == EntityInteractPacket.Type.ATTACK) {
+            EntityManager.get().hitEntity(connection, packet.getEntityId());
+        }
     }
 }

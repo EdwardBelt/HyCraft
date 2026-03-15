@@ -132,7 +132,9 @@ public class ClientConnection implements HyCraftConnection {
     }
 
     public void removeEntities(int[] ids) {
-        for (int id : ids) spawnedEntities.remove(id);
+        for (int id : ids) {
+            spawnedEntities.remove(id);
+        }
     }
 
     public void respawn(double x, double y, double z, float yaw, float pitch) {

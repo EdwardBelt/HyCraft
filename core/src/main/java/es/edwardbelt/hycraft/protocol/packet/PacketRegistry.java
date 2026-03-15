@@ -56,6 +56,7 @@ public class PacketRegistry {
         register(6, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "ChatCommand", ChatCommandPacket.class);
         register(8, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "Chat", ChatMessagePacket.class);
         register(8, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "BlockUpdate", BlockUpdatePacket.class);
+        register(9, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "ClientStatus", ClientStatusPacket.class);
         register(11, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "ClientCommand", ClientCommandPacket.class);
         register(12, ConnectionState.PLAY, PacketDirection.SERVERBOUND, "TickEnd", ClientTickEndPacket.class);
         register(16, ConnectionState.PLAY, PacketDirection.CLIENTBOUND, "Commands", CommandsPacket.class);

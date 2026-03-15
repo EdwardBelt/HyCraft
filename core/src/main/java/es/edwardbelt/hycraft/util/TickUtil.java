@@ -1,8 +1,8 @@
 package es.edwardbelt.hycraft.util;
 
-public class TickConverter {
+public class TickUtil {
     private static final int MINECRAFT_TPS = 20;
-    private static final int DEFAULT_HYTALE_TPS = 30;
+    private static final int DEFAULT_HYTALE_TPS = 40;
 
     private static volatile int hytaleTPS = DEFAULT_HYTALE_TPS;
 

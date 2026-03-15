@@ -91,7 +91,7 @@ public class BlockBreakManager {
         RootInteraction interaction = RootInteraction.getAssetMap().getAsset(interactionId);
         if (interaction == null || interaction.getCooldown() == null) return DEFAULT_DAMAGE_INTERVAL_MS;
 
-        return (long) interaction.getCooldown().cooldown;
+        return (long) (interaction.getCooldown().cooldown * 1000);
     }
 
     private void applyBlockDamage(ClientConnection connection, BlockBreakTracker tracker,
@@ -143,7 +143,7 @@ public class BlockBreakManager {
 
             Map<String, String> interactionVars = item != null ? item.getInteractionVars() : new HashMap<>();
 
-            String interactionId = item != null ? item.getInteractions().get(InteractionType.Primary) : "*Empty_Interactions_Primary";
+            String interactionId = item != null ? item.getInteractions().get(InteractionType.Primary) : "Unarmed_Attack";
             if (interactionId == null) return;
 
             RootInteraction rootInteraction = RootInteraction.getAssetMap().getAsset(interactionId);
