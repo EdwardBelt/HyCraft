@@ -1,0 +1,21 @@
+{
+  "Group": "es.edwardbelt.hycraft",
+  "Name": "HyCraft-Mixins",
+  "Version": "${version}",
+  "Description": "HyCraft Mixins",
+  "Authors": [
+    {
+      "Name": "EdwardBelt"
+    }
+  ],
+  "Website": "https://discord.gg/7RapfdQ7VH",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "Hyxin": {
+    "Configs": [
+      "hycraft-mixins.mixins.json"
+    ]
+  }
+}
