@@ -13,7 +13,6 @@ public class AddToServerPlayerListHandler implements PacketHandler<AddToServerPl
     @Override
     public void handle(AddToServerPlayerList packet, ClientConnection connection) {
         assert packet.players != null;
-        System.out.println("received player list packet");
         List<PlayerInfoUpdatePacket.PlayerInfo> playerInfos = new ArrayList<>();
         for (ServerPlayerListPlayer player : packet.players) {
             PlayerInfoUpdatePacket.PlayerInfo playerInfo = new PlayerInfoUpdatePacket.PlayerInfo(player.uuid);
