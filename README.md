@@ -71,6 +71,17 @@ Due to a classloader limitation in Hytale's `TransformingClassLoader`, mixin-inj
 
 Hytale's `TransformingClassLoader` only delegates to the platform classloader (JDK classes) and does not fall back to the app classloader where early plugin classes live. This means mixin-injected code cannot use `CallbackInfo.cancel()`, `CallbackInfoReturnable.setReturnValue()`, or reference any early plugin classes directly. All cross-classloader communication must go through JVM-global mechanisms like `System.getProperties()`. This is a known Hytale platform limitation, not a Hyxin or Mixin bug.
 
+## LuckPerms Support
+
+HyCraft prefixes Minecraft player usernames with the configured `player_prefix` (default `"."`), which results in usernames like `.PlayerName`. LuckPerms considers these invalid by default, preventing commands like `/lp user .PlayerName` from working.
+
+To fix this, open your `Luckperms/config.yml` and set:
+```yaml
+allow-invalid-usernames: true
+```
+
+This allows LuckPerms to recognize and manage prefixed player names correctly.
+
 ## Configuration
 
 On the first run, a configuration file will be generated at `mods/HyCraft/main.json`.
