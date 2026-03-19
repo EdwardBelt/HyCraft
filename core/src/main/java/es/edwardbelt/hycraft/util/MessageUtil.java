@@ -1,5 +1,6 @@
 package es.edwardbelt.hycraft.util;
 
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtText;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.SystemMessagePacket;
 
@@ -18,6 +19,11 @@ public class MessageUtil {
         }
 
         return message;
+    }
+
+    public static void send(ClientConnection connection, NbtText message) {
+        SystemMessagePacket packet = new SystemMessagePacket(message);
+        connection.getChannel().writeAndFlush(packet);
     }
 
     public static void send(ClientConnection connection, String message, boolean flush, String... vars) {

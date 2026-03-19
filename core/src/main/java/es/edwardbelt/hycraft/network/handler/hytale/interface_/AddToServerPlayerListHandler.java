@@ -18,7 +18,7 @@ public class AddToServerPlayerListHandler implements PacketHandler<AddToServerPl
             PlayerInfoUpdatePacket.PlayerInfo playerInfo = new PlayerInfoUpdatePacket.PlayerInfo(player.uuid);
             playerInfo.listed = true;
             playerInfo.ping = player.ping;
-            playerInfo.name = player.username;
+            playerInfo.name = sanitizeName(player.username);
             playerInfo.displayName = player.username;
 
             ClientConnection playerConnection = MinecraftServerBootstrap.get().getConnection(player.uuid);
@@ -37,5 +37,20 @@ public class AddToServerPlayerListHandler implements PacketHandler<AddToServerPl
         );
 
         connection.getChannel().writeAndFlush(addPlayerPacket);
+    }
+
+    private String sanitizeName(String name) {
+        if (name == null) return "";
+
+        int space = name.lastIndexOf(' ');
+        if (space != -1) {
+            name = name.substring(space + 1);
+        }
+
+        if (name.length() > 16) {
+            name = name.substring(0, 16);
+        }
+
+        return name;
     }
 }

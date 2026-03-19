@@ -145,7 +145,7 @@ public class PacketRegistry {
         PacketInfo info = PACKETS.get(connectionState).get(packetDirection).get(id);
 
         if (info == null) {
-            Logger.ERROR.log("Found no packet with ID '" + id + "' and connection state '" + connectionState + "' and packet direction '" + packetDirection + "'");
+            Logger.DEBUG.log("Found no packet with ID '" + id + "' and connection state '" + connectionState + "' and packet direction '" + packetDirection + "'");
             return null;
         }
 
@@ -153,7 +153,7 @@ public class PacketRegistry {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            Logger.ERROR.log("Error while creating packet instance");
+            Logger.DEBUG.log("Error while creating packet instance");
         }
 
         return null;
