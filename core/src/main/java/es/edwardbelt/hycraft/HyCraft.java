@@ -7,10 +7,10 @@ import es.edwardbelt.hycraft.api.connection.HyCraftConnection;
 import es.edwardbelt.hycraft.api.gui.HyCraftGui;
 import es.edwardbelt.hycraft.config.ConfigManager;
 import es.edwardbelt.hycraft.mapping.MappingRegistry;
+import es.edwardbelt.hycraft.mixin.HookRegistry;
 import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.gui.GuiManager;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
-import es.edwardbelt.hycraft.patches.PatchHelper;
 import es.edwardbelt.hycraft.util.Logger;
 import es.edwardbelt.hycraft.util.ServerIconUtil;
 import lombok.Getter;
@@ -34,7 +34,6 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     public HyCraft(@Nonnull JavaPluginInit init) {
         super(init);
         INSTANCE = this;
-        PatchHelper.init();
 
         this.minecraftServerBootstrap = new MinecraftServerBootstrap();
         this.configManager = new ConfigManager();
@@ -44,7 +43,8 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     protected void setup() {
         HyCraftApi.setInstance(this);
         configManager.reload();
-        PatchHelper.apply();
+
+        HookRegistry.load();
 
         String serverIconPath = getConfigManager().getMain().getServerIcon();
         try {

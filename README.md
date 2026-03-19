@@ -45,6 +45,32 @@ It functions by spinning up a parallel TCP server within the Hytale server proce
 4.  Start the Hytale server.
 5.  HyCraft will start a Minecraft listener on port `25565` (configurable).
 
+## HyCraft Mixins (Optional)
+
+HyCraft Mixins is an optional module that uses [Hyxin](https://github.com/Build-9/Hyxin) to apply Mixin patches to Hytale's server internals. This enables deeper integration that isn't possible through the normal plugin API alone, such as intercepting interaction chains and profile lookups.
+
+### How it works
+
+Hytale loads early plugins before the server fully starts, allowing Hyxin to transform server classes at load time. HyCraft Mixins hooks into this process to modify specific server behaviors like interaction handling and player profile resolution.
+
+Due to a classloader limitation in Hytale's `TransformingClassLoader`, mixin-injected code cannot directly reference classes from the plugin environment. Because of this, HyCraft Mixins communicates with the core plugin through a `System.getProperties()` bridge using `MethodHandle` to call hooks at runtime. This is the same approach used by other Hytale mixin plugins like OrbisGuard.
+
+### Requirements
+
+*   [Hyxin](https://github.com/Build-9/Hyxin) jar in the `earlyplugins/` folder.
+*   HyCraft core plugin in the `mods/` folder (required dependency).
+
+### Setup
+
+1.  Download or build the `Hyxin.jar` and place it in your server's `earlyplugins/` folder.
+2.  Download or build the `HyCraft-Mixins.jar` and place it in your server's `earlyplugins/` folder.
+3.  Make sure the core `HyCraft` plugin is installed in `mods/` as usual.
+4.  Start the server. You should see `HyCraft mixins loaded!` in the console.
+
+### Classloader Limitation
+
+Hytale's `TransformingClassLoader` only delegates to the platform classloader (JDK classes) and does not fall back to the app classloader where early plugin classes live. This means mixin-injected code cannot use `CallbackInfo.cancel()`, `CallbackInfoReturnable.setReturnValue()`, or reference any early plugin classes directly. All cross-classloader communication must go through JVM-global mechanisms like `System.getProperties()`. This is a known Hytale platform limitation, not a Hyxin or Mixin bug.
+
 ## Configuration
 
 On the first run, a configuration file will be generated at `mods/HyCraft/main.json`.
@@ -66,13 +92,8 @@ This project requires **Java 25** to build.
     git clone https://github.com/EdwardBelt/HyCraft.git
     cd HyCraft
     ```
-
-2.  **Provide Dependencies:**
-    You must provide a valid `HytaleServer.jar` for compilation.
-    *   Create a `lib/` directory in the project root.
-    *   Copy your `HytaleServer.jar` into `lib/`.
-
-3.  **Build with Gradle:**
+    
+2.  **Build with Gradle:**
     ```bash
     # Linux/macOS
     ./gradlew shadowJar
@@ -81,7 +102,7 @@ This project requires **Java 25** to build.
     gradlew.bat shadowJar
     ```
 
-4.  The compiled artifact will be located in `core/build/libs/`.
+3.  The compiled artifact will be located in `core/build/libs/`.
 
 ## Contributing
 

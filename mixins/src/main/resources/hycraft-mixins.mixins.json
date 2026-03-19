@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "es.edwardbelt.hycraft.mixins.mixin",
+  "mixins": [
+    "InteractionManagerMixin",
+    "ProfileServiceClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
