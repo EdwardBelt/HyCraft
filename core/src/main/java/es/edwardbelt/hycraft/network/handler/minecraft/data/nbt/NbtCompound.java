@@ -3,6 +3,7 @@ package es.edwardbelt.hycraft.network.handler.minecraft.data.nbt;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NbtCompound extends NbtTag {
@@ -47,6 +48,34 @@ public class NbtCompound extends NbtTag {
             return ((NbtInt) tag).getValue();
         }
         return 0;
+    }
+
+    public void setBoolean(String key, boolean value) {
+        tags.put(key, new NbtBoolean(value, key));
+    }
+
+    public boolean getBoolean(String key) {
+        NbtTag tag = tags.get(key);
+        if (tag instanceof NbtBoolean) {
+            return ((NbtBoolean) tag).getBooleanValue();
+        }
+        return false;
+    }
+
+    public void setList(String key, NbtList list) {
+        tags.put(key, list);
+    }
+
+    public void setList(String key, List<NbtTag> list) {
+        tags.put(key, new NbtList(key, list));
+    }
+
+    public NbtList getList(String key) {
+        NbtTag tag = tags.get(key);
+        if (tag instanceof NbtList) {
+            return (NbtList) tag;
+        }
+        return null;
     }
 
     public NbtCompound createCompound(String key) {

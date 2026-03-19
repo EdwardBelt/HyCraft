@@ -1,51 +1,50 @@
 package es.edwardbelt.hycraft.network.handler.hytale.interface_;
 
-import com.hypixel.hytale.protocol.*;
+import com.hypixel.hytale.protocol.FormattedMessage;
+import com.hypixel.hytale.protocol.MaybeBool;
 import com.hypixel.hytale.protocol.packets.interface_.ServerMessage;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.HytaleUtil;
+import es.edwardbelt.hycraft.network.handler.minecraft.data.nbt.NbtText;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
-import es.edwardbelt.hycraft.protocol.packet.play.SystemMessagePacket;
 import es.edwardbelt.hycraft.util.MessageUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServerMessageHandler implements PacketHandler<ServerMessage> {
     @Override
     public void handle(ServerMessage packet, ClientConnection connection) {
         if (packet.message == null) return;
 
-        List<String> messages = new ArrayList<>();
-        buildMessages(messages, packet.message);
-
-        MessageUtil.send(connection, messages);
+        MessageUtil.send(connection, convertMessage(packet.message));
     }
 
-    private void buildMessages(List<String> list, FormattedMessage message) {
-        list.add("");
-        appendMessage(list, message);
-    }
+    private NbtText convertMessage(FormattedMessage message) {
+        NbtText nbt = new NbtText();
 
-    private void appendMessage(List<String> list, FormattedMessage message) {
         String text = HytaleUtil.resolveMessageText(message);
+        nbt.setText(text != null ? text.replace("\\n", "\n") : "");
 
-        if (text != null) {
-            String[] parts = text.split("\\\\n", -1);
-            for (int i = 0; i < parts.length; i++) {
-                if (i > 0) {
-                    list.add("");
-                }
+        if (message.color != null) {
+            nbt.setColor(message.color);
+        }
 
-                int last = list.size() - 1;
-                list.set(last, list.get(last) + parts[i]);
-            }
+        if (message.bold != MaybeBool.Null) {
+            nbt.setBold(message.bold == MaybeBool.True);
+        }
+
+        if (message.italic != MaybeBool.Null) {
+            nbt.setItalic(message.italic == MaybeBool.True);
+        }
+
+        if (message.underlined != MaybeBool.Null) {
+            nbt.setUnderlined(message.underlined == MaybeBool.True);
         }
 
         if (message.children != null) {
             for (FormattedMessage child : message.children) {
-                appendMessage(list, child);
+                nbt.addChildren(convertMessage(child));
             }
         }
+
+        return nbt;
     }
 }

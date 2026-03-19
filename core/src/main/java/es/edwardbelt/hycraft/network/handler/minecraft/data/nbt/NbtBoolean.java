@@ -13,6 +13,10 @@ public class NbtBoolean extends NbtByte {
         this(value, null);
     }
 
+    public boolean getBooleanValue() {
+        return super.getValue() == 1;
+    }
+
     private static byte getByteByBool(boolean value) {
         return value ? (byte) 1 : 0;
     }
