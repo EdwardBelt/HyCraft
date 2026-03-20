@@ -11,4 +11,13 @@ allprojects {
         maven("https://repo.spongepowered.org/maven")
         maven("https://maven.hytale.com/release")
     }
+
+    plugins.withId("java") {
+        tasks.named<ProcessResources>("processResources") {
+            val projectVersion = version
+            filesMatching("manifest.json") {
+                expand("version" to projectVersion)
+            }
+        }
+    }
 }
