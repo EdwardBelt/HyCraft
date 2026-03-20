@@ -9,13 +9,6 @@ java {
     }
 }
 
-tasks.processResources {
-    val projectVersion = version
-    filesMatching("manifest.json") {
-        expand("version" to projectVersion)
-    }
-}
-
 tasks.shadowJar {
     archiveBaseName.set("HyCraft")
     archiveVersion.set(version.toString())
