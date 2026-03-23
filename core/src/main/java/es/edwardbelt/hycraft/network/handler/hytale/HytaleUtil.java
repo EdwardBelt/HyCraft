@@ -96,7 +96,7 @@ public class HytaleUtil {
     }
 
     public static String getDimensionName(UUID uuid) {
-        return Universe.get().getWorld(uuid).getName();
+        return Universe.get().getWorld(uuid).getName().toLowerCase();
     }
 
     public static String resolveMessageText(FormattedMessage message) {
