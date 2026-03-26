@@ -13,7 +13,7 @@ tasks.jar {
 }
 
 dependencies {
-    implementation("com.hypixel.hytale:Server:2026.02.19-1a311a592")
+    compileOnly("com.hypixel.hytale:Server:${property("hytaleVersion")}")
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
