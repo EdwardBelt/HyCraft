@@ -1,6 +1,8 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.manager.gui;
 
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.component.ComponentAccessor;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import es.edwardbelt.hycraft.api.gui.HyCraftClickType;
 import es.edwardbelt.hycraft.api.gui.HyCraftGui;
 import es.edwardbelt.hycraft.api.gui.HyCraftItemStack;
@@ -62,11 +64,11 @@ public class GuiManager {
         connection.getChannel().writeAndFlush(packet);
     }
 
-    public void clickGui(ClientConnection connection, Inventory inventory, int slot, ClickContainerPacket.Mode mode, int button) {
+    public void clickGui(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, int slot, ClickContainerPacket.Mode mode, int button) {
         HyCraftGui gui = connection.getOpenedGui();
         if (gui == null) {
             closeGui(connection);
-            InventoryManager.get().resyncInventory(connection, inventory);
+            InventoryManager.get().resyncInventory(connection, store, ref);
             return;
         }
 
@@ -74,13 +76,13 @@ public class GuiManager {
         boolean cancel = gui.onClick(connection, slot, clickType);
 
         if (cancel) {
-            InventoryManager.get().resyncInventory(connection, inventory);
+            InventoryManager.get().resyncInventory(connection, store, ref);
             updateGui(connection, gui);
             return;
         }
 
         if (gui instanceof ContainerGui container) {
-            InventoryManager.get().handleContainerClick(connection, inventory, (short) slot, (byte) button, mode, container.getId(), container.getGuiSlotCount());
+            InventoryManager.get().handleContainerClick(connection, store, ref, (short) slot, (byte) button, mode, container.getId(), container.getGuiSlotCount());
         }
     }
 

@@ -7,10 +7,11 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
+import com.hypixel.hytale.server.core.entity.ItemUtils;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.knockback.KnockbackComponent;
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
@@ -389,8 +390,11 @@ public class EntityManager {
             Vector3d attackerPos = entityStore.getComponent(attackerRef, TransformComponent.getComponentType()).getPosition();
             Vector3d targetPos = entityStore.getComponent(targetRef, TransformComponent.getComponentType()).getPosition();
 
-            Inventory inventory = playerEntity.getInventory();
-            com.hypixel.hytale.server.core.inventory.ItemStack hand = inventory.getActiveHotbarItem();
+            InventoryComponent.Hotbar hotbar = entityStore.getComponent(attackerRef, InventoryComponent.Hotbar.getComponentType());
+            if (hotbar == null) return;
+
+            com.hypixel.hytale.server.core.inventory.ItemStack hand = InventoryComponent.getItemInHand(entityStore, attackerRef);
+
             Item item = hand != null ? hand.getItem() : null;
             String itemId = item != null ? item.getId() : "Empty";
 
@@ -418,7 +422,7 @@ public class EntityManager {
             long invalidUntil = currentTime + (long) (cooldown * 1000);
             connection.getItemIdsCooldowns().put(itemId, invalidUntil);
 
-            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+inventory.getActiveHotbarSlot(), (int)(cooldown*20));
+            SetCooldownPacket cooldownPacket = new SetCooldownPacket("slot:"+hotbar.getActiveSlot(), (int)(cooldown*20));
             connection.getChannel().writeAndFlush(cooldownPacket);
 
             InteractionExtractorResponse result = InteractionManager.get().extract(new InteractionContext(connection, interactionVars), mainInteraction);
@@ -483,10 +487,8 @@ public class EntityManager {
 
             Damage.EntitySource source = new Damage.EntitySource(attackerRef);
 
-            Player attackerPlayerComponent = entityStore.getComponent(attackerRef, Player.getComponentType());
-            com.hypixel.hytale.server.core.inventory.ItemStack itemInHand = (attackerPlayerComponent != null &&
-                    !attackerPlayerComponent.canApplyItemStackPenalties(attackerRef, entityStore)) ?
-                    null : hand;
+            com.hypixel.hytale.server.core.inventory.ItemStack itemInHand =
+                    ItemUtils.canApplyItemStackPenalties(attackerRef, entityStore) ? hand : null;
 
             Damage[] hits = DamageCalculatorSystems.queueDamageCalculator(
                     world,

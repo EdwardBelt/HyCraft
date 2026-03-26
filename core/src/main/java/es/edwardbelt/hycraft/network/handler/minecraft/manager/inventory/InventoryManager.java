@@ -1,14 +1,22 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.manager.inventory;
 
+import com.hypixel.hytale.component.ComponentAccessor;
+import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.protocol.SmartMoveType;
 import com.hypixel.hytale.protocol.packets.inventory.DropItemStack;
 import com.hypixel.hytale.protocol.packets.inventory.MoveItemStack;
 import com.hypixel.hytale.protocol.packets.inventory.SmartMoveItemStack;
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.protocol.packets.inventory.UpdatePlayerInventory;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import es.edwardbelt.hycraft.network.MinecraftServerBootstrap;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.ClickContainerPacket;
+
+import javax.annotation.Nullable;
 
 public class InventoryManager {
     private static InventoryManager INSTANCE = new InventoryManager();
@@ -16,14 +24,15 @@ public class InventoryManager {
 
     private static final String EMPTY_ITEM_KEY = "Empty";
 
-    public void handleClick(ClientConnection connection, Inventory inventory, short slot, byte button, ClickContainerPacket.Mode mode) {
-/*
-        System.out.println("received click in slot: " + slot);
-        System.out.println("button was: " + button);
-        System.out.println("mode was: " + mode.name());
-        System.out.println("is cursor item null? " + (connection.getCursor().heldItem == null));
-        System.out.println();*/
+    @Nullable
+    private ItemContainer getSectionById(ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, int sectionId) {
+        ComponentType<EntityStore, ? extends InventoryComponent> type = InventoryComponent.getComponentTypeById(sectionId);
+        if (type == null) return null;
+        InventoryComponent component = store.getComponent(ref, type);
+        return component != null ? component.getInventory() : null;
+    }
 
+    public void handleClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short slot, byte button, ClickContainerPacket.Mode mode) {
         if (mode.equals(ClickContainerPacket.Mode.DRAG)) {
             if (slot == -999) return;
             mode = ClickContainerPacket.Mode.NORMAL_CLICK;
@@ -32,20 +41,20 @@ public class InventoryManager {
         }
 
         if (slot == -999) {
-            handleClickOutside(connection, inventory);
+            handleClickOutside(connection, store, ref);
             return;
         }
 
         switch (mode) {
-            case NORMAL_CLICK -> handleNormalClick(connection, inventory, slot, button);
-            case SHIFT_CLICK -> handleShiftClick(connection, inventory, slot);
-            case NUMBER_KEY -> handleNumberKey(connection, inventory, slot, button);
-            case DROP -> handleDrop(connection, inventory, slot, button);
-            case DOUBLE_CLICK -> handleDoubleClick(connection, inventory, slot);
+            case NORMAL_CLICK -> handleNormalClick(connection, store, ref, slot, button);
+            case SHIFT_CLICK -> handleShiftClick(connection, store, ref, slot);
+            case NUMBER_KEY -> handleNumberKey(connection, store, ref, slot, button);
+            case DROP -> handleDrop(connection, store, ref, slot, button);
+            case DOUBLE_CLICK -> handleDoubleClick(connection, store, ref, slot);
         }
     }
 
-    public void handleContainerClick(ClientConnection connection, Inventory inventory, short slot, byte button, ClickContainerPacket.Mode mode, int containerId, int guiSlotCount) {
+    public void handleContainerClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short slot, byte button, ClickContainerPacket.Mode mode, int containerId, int guiSlotCount) {
         if (mode.equals(ClickContainerPacket.Mode.DRAG)) {
             if (slot == -999) return;
             mode = ClickContainerPacket.Mode.NORMAL_CLICK;
@@ -54,34 +63,34 @@ public class InventoryManager {
         }
 
         if (slot == -999) {
-            handleClickOutside(connection, inventory);
+            handleClickOutside(connection, store, ref);
             return;
         }
 
         switch (mode) {
-            case NORMAL_CLICK -> handleNormalClick(connection, inventory, slot, button, containerId, guiSlotCount);
-            case SHIFT_CLICK -> handleShiftClick(connection, inventory, slot, containerId, guiSlotCount);
-            case NUMBER_KEY -> handleNumberKey(connection, inventory, slot, button, containerId, guiSlotCount);
-            case DROP -> handleDrop(connection, inventory, slot, button, containerId, guiSlotCount);
-            case DOUBLE_CLICK -> handleDoubleClick(connection, inventory, slot, containerId, guiSlotCount);
+            case NORMAL_CLICK -> handleNormalClick(connection, store, ref, slot, button, containerId, guiSlotCount);
+            case SHIFT_CLICK -> handleShiftClick(connection, store, ref, slot, containerId, guiSlotCount);
+            case NUMBER_KEY -> handleNumberKey(connection, store, ref, slot, button, containerId, guiSlotCount);
+            case DROP -> handleDrop(connection, store, ref, slot, button, containerId, guiSlotCount);
+            case DOUBLE_CLICK -> handleDoubleClick(connection, store, ref, slot, containerId, guiSlotCount);
         }
     }
 
-    private void handleClickOutside(ClientConnection connection, Inventory inventory) {
+    private void handleClickOutside(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref) {
         InventoryCursor cursor = connection.getCursor();
         if (cursor.heldItem == null) return;
 
-        resyncInventory(connection, inventory);
+        resyncInventory(connection, store, ref);
     }
 
-    private void handleNormalClick(ClientConnection connection, Inventory inventory, short mcSlot, byte button) {
+    private void handleNormalClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, byte button) {
         HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
         if (hytaleSlot == null) {
-            resyncInventory(connection, inventory);
+            resyncInventory(connection, store, ref);
             return;
         }
 
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
         if (container == null) return;
 
         ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
@@ -230,7 +239,7 @@ public class InventoryManager {
         }
     }
 
-    private void handleNumberKey(ClientConnection connection, Inventory inventory, short mcSlot, byte button) {
+    private void handleNumberKey(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, byte button) {
         InventoryCursor cursor = connection.getCursor();
         if (button < 0 || button > 8) return;
 
@@ -239,152 +248,8 @@ public class InventoryManager {
 
         HytaleSlot hotbarSlot = new HytaleSlot(-1, button);
 
-        ItemContainer clickedContainer = inventory.getSectionById(clickedSlot.sectionId);
-        ItemContainer hotbarContainer = inventory.getSectionById(hotbarSlot.sectionId);
-
-        if (clickedContainer == null || hotbarContainer == null) return;
-
-        ItemStack clickedItem =
-                clickedContainer.getItemStack((short) clickedSlot.slotId);
-        ItemStack hotbarItem =
-                hotbarContainer.getItemStack((short) hotbarSlot.slotId);
-
-        boolean clickedEmpty = isHytaleItemEmpty(clickedItem);
-        boolean hotbarEmpty = isHytaleItemEmpty(hotbarItem);
-
-        if (!clickedEmpty) {
-            MoveItemStack move1 = new MoveItemStack(
-                    clickedSlot.sectionId, clickedSlot.slotId,
-                    clickedItem.getQuantity(),
-                    hotbarSlot.sectionId, hotbarSlot.slotId
-            );
-            connection.getHytaleChannel().sendPacket(move1);
-
-        } else if (!hotbarEmpty) {
-            MoveItemStack move = new MoveItemStack(
-                    hotbarSlot.sectionId, hotbarSlot.slotId,
-                    hotbarItem.getQuantity(),
-                    clickedSlot.sectionId, clickedSlot.slotId
-            );
-            connection.getHytaleChannel().sendPacket(move);
-        }
-
-        cursor.heldItem = null;
-    }
-
-    private void handleDoubleClick(ClientConnection connection, Inventory inventory, short mcSlot) {
-        InventoryCursor cursor = connection.getCursor();
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
-        if (hytaleSlot == null) return;
-
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
-        if (container == null) return;
-
-        ItemStack slotItem =
-                container.getItemStack((short) hytaleSlot.slotId);
-
-        if (isHytaleItemEmpty(slotItem)) return;
-
-        SmartMoveItemStack smartMove = new SmartMoveItemStack(
-                hytaleSlot.sectionId,
-                hytaleSlot.slotId,
-                slotItem.getQuantity(),
-                SmartMoveType.EquipOrMergeStack
-        );
-        connection.getHytaleChannel().sendPacket(smartMove);
-
-        cursor.heldItem = null;
-    }
-
-    private void handleShiftClick(ClientConnection connection, Inventory inventory, short mcSlot) {
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
-        if (hytaleSlot == null) return;
-
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
-        ItemStack slotItem =
-                container.getItemStack((short) hytaleSlot.slotId);
-
-        if (slotItem == null || slotItem.isEmpty()) return;
-
-        SmartMoveItemStack smartMove = new SmartMoveItemStack(
-                hytaleSlot.sectionId,
-                hytaleSlot.slotId,
-                slotItem.getQuantity(),
-                SmartMoveType.PutInHotbarOrWindow
-        );
-        connection.getHytaleChannel().sendPacket(smartMove);
-    }
-
-    private void handleDrop(ClientConnection connection, Inventory inventory,short mcSlot, int button) {
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
-        if (hytaleSlot == null) {
-            resyncInventory(connection, inventory);
-            return;
-        }
-
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
-        if (container == null) return;
-
-        ItemStack item = container.getItemStack((short) hytaleSlot.slotId);
-        if (item == null || item.isEmpty()) {
-            resyncInventory(connection, inventory);
-            return;
-        }
-
-        int quantity = button == 0 ? 1 : item.getQuantity();
-
-        DropItemStack packet = new DropItemStack(hytaleSlot.sectionId, hytaleSlot.slotId, quantity);
-        connection.getHytaleChannel().sendPacket(packet);
-    }
-
-    private void handleNormalClick(ClientConnection connection, Inventory inventory, short mcSlot, byte button, int containerId, int guiSlotCount) {
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
-        if (hytaleSlot == null) {
-            resyncInventory(connection, inventory);
-            return;
-        }
-
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
-        if (container == null) return;
-
-        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
-
-        if (button == 0) {
-            handleLeftClick(connection, mcSlot, hytaleSlot, slotItem);
-        } else if (button == 1) {
-            handleRightClick(connection, mcSlot, hytaleSlot, slotItem);
-        }
-    }
-
-    private void handleShiftClick(ClientConnection connection, Inventory inventory, short mcSlot, int containerId, int guiSlotCount) {
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
-        if (hytaleSlot == null) return;
-
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
-        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
-
-        if (slotItem == null || slotItem.isEmpty()) return;
-
-        SmartMoveItemStack smartMove = new SmartMoveItemStack(
-                hytaleSlot.sectionId,
-                hytaleSlot.slotId,
-                slotItem.getQuantity(),
-                SmartMoveType.PutInHotbarOrWindow
-        );
-        connection.getHytaleChannel().sendPacket(smartMove);
-    }
-
-    private void handleNumberKey(ClientConnection connection, Inventory inventory, short mcSlot, byte button, int containerId, int guiSlotCount) {
-        InventoryCursor cursor = connection.getCursor();
-        if (button < 0 || button > 8) return;
-
-        HytaleSlot clickedSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
-        if (clickedSlot == null) return;
-
-        HytaleSlot hotbarSlot = new HytaleSlot(-1, button);
-
-        ItemContainer clickedContainer = inventory.getSectionById(clickedSlot.sectionId);
-        ItemContainer hotbarContainer = inventory.getSectionById(hotbarSlot.sectionId);
+        ItemContainer clickedContainer = getSectionById(store, ref, clickedSlot.sectionId);
+        ItemContainer hotbarContainer = getSectionById(store, ref, hotbarSlot.sectionId);
 
         if (clickedContainer == null || hotbarContainer == null) return;
 
@@ -413,12 +278,12 @@ public class InventoryManager {
         cursor.heldItem = null;
     }
 
-    private void handleDoubleClick(ClientConnection connection, Inventory inventory, short mcSlot, int containerId, int guiSlotCount) {
+    private void handleDoubleClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot) {
         InventoryCursor cursor = connection.getCursor();
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
         if (hytaleSlot == null) return;
 
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
         if (container == null) return;
 
         ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
@@ -436,19 +301,39 @@ public class InventoryManager {
         cursor.heldItem = null;
     }
 
-    private void handleDrop(ClientConnection connection, Inventory inventory, short mcSlot, int button, int containerId, int guiSlotCount) {
-        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+    private void handleShiftClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
+        if (hytaleSlot == null) return;
+
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (slotItem == null || slotItem.isEmpty()) return;
+
+        SmartMoveItemStack smartMove = new SmartMoveItemStack(
+                hytaleSlot.sectionId,
+                hytaleSlot.slotId,
+                slotItem.getQuantity(),
+                SmartMoveType.PutInHotbarOrWindow
+        );
+        connection.getHytaleChannel().sendPacket(smartMove);
+    }
+
+    private void handleDrop(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, int button) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot);
         if (hytaleSlot == null) {
-            resyncInventory(connection, inventory);
+            resyncInventory(connection, store, ref);
             return;
         }
 
-        ItemContainer container = inventory.getSectionById(hytaleSlot.sectionId);
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
         if (container == null) return;
 
         ItemStack item = container.getItemStack((short) hytaleSlot.slotId);
         if (item == null || item.isEmpty()) {
-            resyncInventory(connection, inventory);
+            resyncInventory(connection, store, ref);
             return;
         }
 
@@ -458,8 +343,147 @@ public class InventoryManager {
         connection.getHytaleChannel().sendPacket(packet);
     }
 
-    public void resyncInventory(ClientConnection connection, Inventory inventory) {
-        connection.getHytaleChannel().writeAndFlush(inventory.toPacket());
+    private void handleNormalClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, byte button, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) {
+            resyncInventory(connection, store, ref);
+            return;
+        }
+
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (button == 0) {
+            handleLeftClick(connection, mcSlot, hytaleSlot, slotItem);
+        } else if (button == 1) {
+            handleRightClick(connection, mcSlot, hytaleSlot, slotItem);
+        }
+    }
+
+    private void handleShiftClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) return;
+
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (slotItem == null || slotItem.isEmpty()) return;
+
+        SmartMoveItemStack smartMove = new SmartMoveItemStack(
+                hytaleSlot.sectionId,
+                hytaleSlot.slotId,
+                slotItem.getQuantity(),
+                SmartMoveType.PutInHotbarOrWindow
+        );
+        connection.getHytaleChannel().sendPacket(smartMove);
+    }
+
+    private void handleNumberKey(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, byte button, int containerId, int guiSlotCount) {
+        InventoryCursor cursor = connection.getCursor();
+        if (button < 0 || button > 8) return;
+
+        HytaleSlot clickedSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (clickedSlot == null) return;
+
+        HytaleSlot hotbarSlot = new HytaleSlot(-1, button);
+
+        ItemContainer clickedContainer = getSectionById(store, ref, clickedSlot.sectionId);
+        ItemContainer hotbarContainer = getSectionById(store, ref, hotbarSlot.sectionId);
+
+        if (clickedContainer == null || hotbarContainer == null) return;
+
+        ItemStack clickedItem = clickedContainer.getItemStack((short) clickedSlot.slotId);
+        ItemStack hotbarItem = hotbarContainer.getItemStack((short) hotbarSlot.slotId);
+
+        boolean clickedEmpty = isHytaleItemEmpty(clickedItem);
+        boolean hotbarEmpty = isHytaleItemEmpty(hotbarItem);
+
+        if (!clickedEmpty) {
+            MoveItemStack move1 = new MoveItemStack(
+                    clickedSlot.sectionId, clickedSlot.slotId,
+                    clickedItem.getQuantity(),
+                    hotbarSlot.sectionId, hotbarSlot.slotId
+            );
+            connection.getHytaleChannel().sendPacket(move1);
+        } else if (!hotbarEmpty) {
+            MoveItemStack move = new MoveItemStack(
+                    hotbarSlot.sectionId, hotbarSlot.slotId,
+                    hotbarItem.getQuantity(),
+                    clickedSlot.sectionId, clickedSlot.slotId
+            );
+            connection.getHytaleChannel().sendPacket(move);
+        }
+
+        cursor.heldItem = null;
+    }
+
+    private void handleDoubleClick(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, int containerId, int guiSlotCount) {
+        InventoryCursor cursor = connection.getCursor();
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) return;
+
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack slotItem = container.getItemStack((short) hytaleSlot.slotId);
+
+        if (isHytaleItemEmpty(slotItem)) return;
+
+        SmartMoveItemStack smartMove = new SmartMoveItemStack(
+                hytaleSlot.sectionId,
+                hytaleSlot.slotId,
+                slotItem.getQuantity(),
+                SmartMoveType.EquipOrMergeStack
+        );
+        connection.getHytaleChannel().sendPacket(smartMove);
+
+        cursor.heldItem = null;
+    }
+
+    private void handleDrop(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, short mcSlot, int button, int containerId, int guiSlotCount) {
+        HytaleSlot hytaleSlot = mcSlotToHytale(mcSlot, containerId, guiSlotCount);
+        if (hytaleSlot == null) {
+            resyncInventory(connection, store, ref);
+            return;
+        }
+
+        ItemContainer container = getSectionById(store, ref, hytaleSlot.sectionId);
+        if (container == null) return;
+
+        ItemStack item = container.getItemStack((short) hytaleSlot.slotId);
+        if (item == null || item.isEmpty()) {
+            resyncInventory(connection, store, ref);
+            return;
+        }
+
+        int quantity = button == 0 ? 1 : item.getQuantity();
+
+        DropItemStack packet = new DropItemStack(hytaleSlot.sectionId, hytaleSlot.slotId, quantity);
+        connection.getHytaleChannel().sendPacket(packet);
+    }
+
+    public void resyncInventory(ClientConnection connection, ComponentAccessor<EntityStore> store, Ref<EntityStore> ref) {
+        InventoryComponent.Storage storage = store.getComponent(ref, InventoryComponent.Storage.getComponentType());
+        InventoryComponent.Armor armor = store.getComponent(ref, InventoryComponent.Armor.getComponentType());
+        InventoryComponent.Hotbar hotbar = store.getComponent(ref, InventoryComponent.Hotbar.getComponentType());
+        InventoryComponent.Utility utility = store.getComponent(ref, InventoryComponent.Utility.getComponentType());
+        InventoryComponent.Tool tools = store.getComponent(ref, InventoryComponent.Tool.getComponentType());
+        InventoryComponent.Backpack backpack = store.getComponent(ref, InventoryComponent.Backpack.getComponentType());
+
+        UpdatePlayerInventory packet = new UpdatePlayerInventory(
+                storage.getInventory().toPacket(),
+                armor.getInventory().toPacket(),
+                hotbar.getInventory().toPacket(),
+                utility.getInventory().toPacket(),
+                tools.getInventory().toPacket(),
+                backpack.getInventory().toPacket()
+        );
+
+        MinecraftServerBootstrap.get().getHytaleHandlerRegistry().handlePacket(packet, connection);
     }
 
     private HytaleSlot mcSlotToHytale(short mcSlot) {
@@ -494,5 +518,4 @@ public class InventoryManager {
     private boolean isHytaleItemEmpty(ItemStack item) {
         return item == null || item.getItemId().equals(EMPTY_ITEM_KEY);
     }
-
 }

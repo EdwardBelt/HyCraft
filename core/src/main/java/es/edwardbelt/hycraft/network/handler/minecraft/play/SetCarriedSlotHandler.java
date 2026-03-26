@@ -4,6 +4,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
@@ -22,7 +23,10 @@ public class SetCarriedSlotHandler implements PacketHandler<SetCarriedSlotPacket
             LivingEntity entity = store.getComponent(entityRef, Player.getComponentType());
             if (entity == null) return;
 
-            entity.getInventory().setActiveHotbarSlot((byte) packet.getSlotId());
+            InventoryComponent.Hotbar hotbar = store.getComponent(entityRef, InventoryComponent.Hotbar.getComponentType());
+            if (hotbar == null) return;
+
+            hotbar.setActiveSlot((byte) packet.getSlotId());
         });
     }
 }

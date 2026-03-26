@@ -1,9 +1,6 @@
 package es.edwardbelt.hycraft.network.player;
 
-import com.hypixel.hytale.protocol.Direction;
-import com.hypixel.hytale.protocol.MovementStates;
-import com.hypixel.hytale.protocol.Position;
-import com.hypixel.hytale.protocol.Vector3d;
+import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.protocol.io.netty.ProtocolUtil;
 import com.hypixel.hytale.protocol.packets.connection.Ping;
 import com.hypixel.hytale.protocol.packets.player.ClientMovement;
@@ -61,6 +58,10 @@ public class ClientConnection implements HyCraftConnection {
 
     private int windowId;
     private HyCraftGui openedGui;
+
+    private InventorySection cachedHotbar;
+    private InventorySection cachedStorage;
+    private InventorySection cachedArmor;
 
     private final MovementStates movementStates;
     public AtomicInteger clientChainId;

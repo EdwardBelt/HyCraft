@@ -12,7 +12,6 @@ import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.gameplay.GameplayConfig;
 import com.hypixel.hytale.server.core.asset.type.gameplay.WorldConfig;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -69,6 +68,7 @@ public class UseManager {
         return true;
     }
 
+    @SuppressWarnings("removal")
     public void placeBlock(ClientConnection connection, BlockPosition targetBlock, int face, World world, Store<EntityStore> store, Ref<EntityStore> entityRef) {
         ChunkStore chunkStore = world.getChunkStore();
         Store<ChunkStore> chunkStoreStore = chunkStore.getStore();
@@ -85,7 +85,7 @@ public class UseManager {
         Player playerComponent = store.getComponent(entityRef, Player.getComponentType());
         TransformComponent transformComponent = store.getComponent(entityRef, TransformComponent.getComponentType());
 
-        Inventory inventory = playerComponent.getInventory();
+        com.hypixel.hytale.server.core.inventory.Inventory inventory = playerComponent.getInventory();
         if (inventory == null) {
             return;
         }
@@ -159,7 +159,8 @@ public class UseManager {
                 true,
                 chunkReference,
                 chunkStoreStore,
-                store
+                store,
+                false
         );
     }
 

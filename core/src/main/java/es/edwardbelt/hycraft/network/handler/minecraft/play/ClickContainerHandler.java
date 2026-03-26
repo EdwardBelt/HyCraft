@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
@@ -25,12 +24,10 @@ public class ClickContainerHandler implements PacketHandler<ClickContainerPacket
             LivingEntity entity = store.getComponent(entityRef, Player.getComponentType());
             if (entity == null) return;
 
-            Inventory inventory = entity.getInventory();
-
             if (packet.getWindowId() != 0) {
-                GuiManager.get().clickGui(connection, inventory, packet.getSlot(), packet.getClickMode(), packet.getButton());
+                GuiManager.get().clickGui(connection, store, entityRef, packet.getSlot(), packet.getClickMode(), packet.getButton());
             } else {
-                InventoryManager.get().handleClick(connection, inventory, packet.getSlot(), packet.getButton(), packet.getClickMode());
+                InventoryManager.get().handleClick(connection, store, entityRef, packet.getSlot(), packet.getButton(), packet.getClickMode());
             }
         });
     }

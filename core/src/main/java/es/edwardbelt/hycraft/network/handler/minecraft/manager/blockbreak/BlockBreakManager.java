@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.interaction.BlockHarvestUtils;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
@@ -80,11 +80,9 @@ public class BlockBreakManager {
     }
 
     private long getItemInHandBreakCooldown(Store<EntityStore> store, Ref<EntityStore> entityRef) {
-        LivingEntity playerEntity = store.getComponent(entityRef, Player.getComponentType());
-
-        Inventory inventory = playerEntity.getInventory();
-        ItemStack hand = inventory.getActiveHotbarItem();
+        ItemStack hand = InventoryComponent.getItemInHand(store, entityRef);
         if (hand == null || hand.isEmpty()) return DEFAULT_DAMAGE_INTERVAL_MS;
+
         String interactionId = hand.getItem().getInteractions().get(InteractionType.Primary);
         if (interactionId == null) return DEFAULT_DAMAGE_INTERVAL_MS;
 
@@ -135,8 +133,7 @@ public class BlockBreakManager {
                 return;
             }
 
-            Inventory inventory = playerEntity.getInventory();
-            ItemStack hand = inventory.getActiveHotbarItem();
+            ItemStack hand = InventoryComponent.getItemInHand(store, entityRef);
 
             Item item = hand != null ? hand.getItem() : null;
             String itemInHandId = (hand != null && !hand.isEmpty()) ? hand.getItemId() : null;
