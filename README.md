@@ -125,4 +125,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 *   **Discord:** `@edwardbelt`
-*   **Community:** [EdwardBelt Discord](https://discord.gg/6XTNSKQAAu)
+*   **Community:** [HyCraft Discord](https://discord.gg/dME6AYCdUB)
