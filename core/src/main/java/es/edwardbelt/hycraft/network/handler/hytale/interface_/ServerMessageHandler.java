@@ -1,7 +1,6 @@
 package es.edwardbelt.hycraft.network.handler.hytale.interface_;
 
 import com.hypixel.hytale.protocol.FormattedMessage;
-import com.hypixel.hytale.protocol.MaybeBool;
 import com.hypixel.hytale.protocol.packets.interface_.ServerMessage;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.handler.hytale.HytaleUtil;
@@ -27,16 +26,16 @@ public class ServerMessageHandler implements PacketHandler<ServerMessage> {
             nbt.setColor(message.color);
         }
 
-        if (message.bold != MaybeBool.Null) {
-            nbt.setBold(message.bold == MaybeBool.True);
+        if (message.bold != null) {
+            nbt.setBold(message.bold);
         }
 
-        if (message.italic != MaybeBool.Null) {
-            nbt.setItalic(message.italic == MaybeBool.True);
+        if (message.italic != null) {
+            nbt.setItalic(message.italic);
         }
 
-        if (message.underlined != MaybeBool.Null) {
-            nbt.setUnderlined(message.underlined == MaybeBool.True);
+        if (message.underlined != null) {
+            nbt.setUnderlined(message.underlined);
         }
 
         if (message.children != null) {

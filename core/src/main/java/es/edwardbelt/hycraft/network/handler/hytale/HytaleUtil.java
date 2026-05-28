@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.auth.PlayerAuthentication;
 import com.hypixel.hytale.server.core.io.PacketHandler;
 import com.hypixel.hytale.server.core.io.ProtocolVersion;
 import com.hypixel.hytale.server.core.io.handlers.SetupPacketHandler;
+import com.hypixel.hytale.server.core.io.handlers.game.GamePacketHandler;
 import com.hypixel.hytale.server.core.io.netty.NettyUtil;
 import com.hypixel.hytale.server.core.io.netty.PlayerChannelHandler;
 import com.hypixel.hytale.server.core.modules.i18n.I18nModule;
@@ -76,8 +77,9 @@ public class HytaleUtil {
 
             ProtocolVersion hytaleProtocol = new ProtocolVersion(ProtocolConstants.HYTALE_PROTOCOL_CRC);
 
+
             SetupPacketHandler setupHandler = new SetupPacketHandler(
-                    hytaleChannel,
+                    new NettyUtil.NettyChannelConnection(hytaleChannel),
                     hytaleProtocol,
                     "en-US",
                     auth

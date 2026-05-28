@@ -6,6 +6,7 @@ import com.hypixel.hytale.protocol.packets.connection.Ping;
 import com.hypixel.hytale.protocol.packets.player.ClientMovement;
 import com.hypixel.hytale.protocol.packets.player.ClientReady;
 import com.hypixel.hytale.server.core.HytaleServer;
+import com.hypixel.hytale.server.core.io.netty.NettyUtil;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import es.edwardbelt.hycraft.HyCraft;
@@ -212,7 +213,7 @@ public class ClientConnection implements HyCraftConnection {
 
     public void cleanup() {
         if (hytaleChannel != null && hytaleChannel.isOpen()) {
-            ProtocolUtil.closeApplicationConnection(hytaleChannel);
+            NettyUtil.closeApplicationConnection(hytaleChannel);
         }
         if (blockBreakTracker != null) blockBreakTracker.cancel();
         hytaleChannel = null;

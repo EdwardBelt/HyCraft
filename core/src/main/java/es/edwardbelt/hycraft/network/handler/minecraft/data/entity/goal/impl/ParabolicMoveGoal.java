@@ -1,7 +1,7 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.data.entity.goal.impl;
 
-import com.hypixel.hytale.math.vector.Vector3d;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.entity.goal.Goal;
+import org.joml.Vector3d;
 
 public class ParabolicMoveGoal extends Goal {
     private final double startX;
@@ -19,12 +19,12 @@ public class ParabolicMoveGoal extends Goal {
     private boolean shouldExecute;
 
     public ParabolicMoveGoal(Vector3d start, Vector3d end, double height, long timeToComplete) {
-        this.startX = start.getX();
-        this.startY = start.getY();
-        this.startZ = start.getZ();
-        this.targetX = end.getX();
-        this.targetY = end.getY();
-        this.targetZ = end.getZ();
+        this.startX = start.x();
+        this.startY = start.y();
+        this.startZ = start.z();
+        this.targetX = end.x();
+        this.targetY = end.y();
+        this.targetZ = end.z();
         this.height = height;
         this.timeToComplete = timeToComplete;
         this.shouldExecute = true;

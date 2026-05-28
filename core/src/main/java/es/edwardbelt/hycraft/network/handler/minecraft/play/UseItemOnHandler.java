@@ -2,7 +2,6 @@ package es.edwardbelt.hycraft.network.handler.minecraft.play;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.protocol.BlockPosition;
 import com.hypixel.hytale.protocol.InteractionChainData;
 import com.hypixel.hytale.protocol.InteractionType;
@@ -12,7 +11,6 @@ import com.hypixel.hytale.server.core.entity.InteractionManager;
 import com.hypixel.hytale.server.core.modules.interaction.InteractionModule;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.RootInteraction;
-import com.hypixel.hytale.server.core.modules.interaction.interaction.config.client.PlaceBlockInteraction;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -22,6 +20,7 @@ import es.edwardbelt.hycraft.network.handler.hytale.manager.interaction.ForcedLo
 import es.edwardbelt.hycraft.network.handler.minecraft.manager.use.UseManager;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.UseItemOnPacket;
+import org.joml.Vector3i;
 
 public class UseItemOnHandler implements PacketHandler<UseItemOnPacket> {
     @Override

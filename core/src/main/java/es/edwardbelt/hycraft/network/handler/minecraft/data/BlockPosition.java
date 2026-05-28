@@ -1,10 +1,10 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.data;
 
-import com.hypixel.hytale.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.joml.Vector3i;
 
 @Getter
 @AllArgsConstructor
