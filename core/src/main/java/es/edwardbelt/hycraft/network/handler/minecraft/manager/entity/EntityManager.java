@@ -3,8 +3,9 @@ package es.edwardbelt.hycraft.network.handler.minecraft.manager.entity;
 import com.hypixel.hytale.component.ComponentAccessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
+import com.hypixel.hytale.math.vector.Rotation3fc;
+import org.joml.Vector3d;
 import com.hypixel.hytale.protocol.*;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.entity.ItemUtils;
@@ -470,14 +471,14 @@ public class EntityManager {
                 Knockback knockback = damageEffects.getKnockback();
 
                 HeadRotation attackerHeadRotation = entityStore.getComponent(attackerRef, HeadRotation.getComponentType());
-                Vector3f attackerDirection = attackerHeadRotation != null ?
-                        attackerHeadRotation.getRotation() : Vector3f.ZERO;
+                Rotation3fc attackerDirection = attackerHeadRotation != null ?
+                        attackerHeadRotation.getRotation() : Rotation3f.ZERO;
 
                 Vector3d knockbackVec = knockback.calculateVector(
                         attackerPos,
-                        attackerDirection.getYaw(),
+                        attackerDirection.yaw(),
                         targetPos
-                ).scale(knockbackMultiplier[0]);
+                ).mul(knockbackMultiplier[0]);
 
                 knockbackComponent.setVelocity(knockbackVec);
                 knockbackComponent.setVelocityType(knockback.getVelocityType());

@@ -1,8 +1,8 @@
 package es.edwardbelt.hycraft.network.handler.minecraft.data.entity.goal.impl;
 
-import com.hypixel.hytale.math.vector.Vector3d;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.entity.goal.Goal;
 import lombok.Setter;
+import org.joml.Vector3d;
 
 public class MoveGoal extends Goal {
     private final double targetX;
@@ -30,9 +30,9 @@ public class MoveGoal extends Goal {
     private float pitch;
 
     public MoveGoal(Vector3d moveGoal, long timeToComplete) {
-        this.targetX = moveGoal.getX();
-        this.targetY = moveGoal.getY();
-        this.targetZ = moveGoal.getZ();
+        this.targetX = moveGoal.x();
+        this.targetY = moveGoal.y();
+        this.targetZ = moveGoal.z();
         this.timeToComplete = timeToComplete;
         this.shouldExecute = true;
         this.invertRotation = false;

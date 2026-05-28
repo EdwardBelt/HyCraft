@@ -3,7 +3,6 @@ package es.edwardbelt.hycraft.network.handler.minecraft.manager.blockbreak;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.protocol.InteractionType;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
@@ -27,6 +26,7 @@ import es.edwardbelt.hycraft.network.handler.hytale.manager.interaction.Interact
 import es.edwardbelt.hycraft.network.handler.minecraft.data.BlockPosition;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.*;
+import org.joml.Vector3i;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -153,7 +153,6 @@ public class BlockBreakManager {
 
             connection.setLastBreakTime(System.currentTimeMillis());
             boolean destroyed = BlockHarvestUtils.performBlockDamage(
-                    playerEntity,
                     entityRef,
                     targetBlock,
                     hand,

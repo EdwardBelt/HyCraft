@@ -26,7 +26,7 @@ public class SetCarriedSlotHandler implements PacketHandler<SetCarriedSlotPacket
             InventoryComponent.Hotbar hotbar = store.getComponent(entityRef, InventoryComponent.Hotbar.getComponentType());
             if (hotbar == null) return;
 
-            hotbar.setActiveSlot((byte) packet.getSlotId());
+            hotbar.setActiveSlot((byte) packet.getSlotId(), entityRef, store);
         });
     }
 }

@@ -1,11 +1,11 @@
 package es.edwardbelt.hycraft.network.handler.hytale.entities;
 
 import com.hypixel.hytale.protocol.ChangeVelocityType;
-import com.hypixel.hytale.protocol.Vector3f;
 import com.hypixel.hytale.protocol.packets.entities.ChangeVelocity;
 import es.edwardbelt.hycraft.network.handler.PacketHandler;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
 import es.edwardbelt.hycraft.protocol.packet.play.SetEntityVelocityPacket;
+import org.joml.Vector3f;
 
 public class ChangeVelocityHandler implements PacketHandler<ChangeVelocity> {
     @Override

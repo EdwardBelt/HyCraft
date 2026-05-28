@@ -1,5 +1,9 @@
 package es.edwardbelt.hycraft;
 
+import com.hypixel.hytale.protocol.Packet;
+import com.hypixel.hytale.protocol.packets.inventory.SmartMoveItemStack;
+import com.hypixel.hytale.server.core.io.PacketHandler;
+import com.hypixel.hytale.server.core.io.adapter.PacketAdapters;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import es.edwardbelt.hycraft.api.HyCraftApi;
@@ -58,6 +62,12 @@ public class HyCraft extends JavaPlugin implements HyCraftApi {
     protected void start() {
         MappingRegistry.init();
         minecraftServerBootstrap.init();
+
+        PacketAdapters.registerInbound((PacketHandler handler, Packet packet) -> {
+           if (!(packet instanceof SmartMoveItemStack movePacket)) return;
+
+            System.out.println("move packet: " + movePacket.fromSectionId);
+        });
     }
 
     @Override

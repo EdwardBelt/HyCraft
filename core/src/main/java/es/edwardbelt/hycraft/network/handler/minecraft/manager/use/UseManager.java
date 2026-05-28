@@ -3,7 +3,6 @@ package es.edwardbelt.hycraft.network.handler.minecraft.manager.use;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.BlockRotation;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.protocol.Rotation;
@@ -25,7 +24,10 @@ import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import es.edwardbelt.hycraft.network.handler.minecraft.data.BlockPosition;
 import es.edwardbelt.hycraft.network.player.ClientConnection;
+import es.edwardbelt.hycraft.util.VectorUtil;
 import es.edwardbelt.hycraft.protocol.packet.play.EntityAnimationPacket;
+import org.joml.Vector3d;
+import org.joml.Vector3i;
 
 public class UseManager {
     private final static UseManager INSTANCE = new UseManager();
@@ -123,7 +125,7 @@ public class UseManager {
                     (double) placementPosition.getZ() + 0.5
             );
 
-            if (playerPosition.distanceSquaredTo(blockCenter) > 36.0) {
+            if (VectorUtil.distanceSquaredTo(playerPosition, blockCenter) > 36.0) {
                 return;
             }
         }
@@ -151,15 +153,16 @@ public class UseManager {
                 heldItemStack,
                 blockTypeKey,
                 heldItemContainer,
-                blockFace.getDirection(),
+                new Vector3i(blockFace.getDirection()),
                 placementPosition.toVector3i(),
                 blockRotation,
-                inventory,
                 heldSlot,
                 true,
                 chunkReference,
                 chunkStoreStore,
                 store,
+                false,
+                false,
                 false
         );
     }

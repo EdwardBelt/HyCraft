@@ -1,9 +1,9 @@
 package es.edwardbelt.hycraft.protocol.packet.play;
 
-import com.hypixel.hytale.protocol.Vector3f;
 import es.edwardbelt.hycraft.protocol.io.PacketBuffer;
 import es.edwardbelt.hycraft.protocol.packet.Packet;
 import lombok.AllArgsConstructor;
+import org.joml.Vector3f;
 
 @AllArgsConstructor
 public class SetEntityVelocityPacket implements Packet {

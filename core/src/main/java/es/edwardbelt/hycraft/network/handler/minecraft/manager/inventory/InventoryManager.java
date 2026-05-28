@@ -8,6 +8,9 @@ import com.hypixel.hytale.protocol.packets.inventory.DropItemStack;
 import com.hypixel.hytale.protocol.packets.inventory.MoveItemStack;
 import com.hypixel.hytale.protocol.packets.inventory.SmartMoveItemStack;
 import com.hypixel.hytale.protocol.packets.inventory.UpdatePlayerInventory;
+import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.entities.player.windows.ItemContainerWindow;
+import com.hypixel.hytale.server.core.entity.entities.player.windows.Window;
 import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
@@ -25,7 +28,17 @@ public class InventoryManager {
     private static final String EMPTY_ITEM_KEY = "Empty";
 
     @Nullable
-    private ItemContainer getSectionById(ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, int sectionId) {
+    public static ItemContainer getSectionById(ComponentAccessor<EntityStore> store, Ref<EntityStore> ref, int sectionId) {
+        if (sectionId >= 0) {
+            Player playerComponent = store.getComponent(ref, Player.getComponentType());
+            if (playerComponent != null) {
+                Window window = playerComponent.getWindowManager().getWindow(sectionId);
+                if (window instanceof ItemContainerWindow itemContainerWindow) {
+                    return itemContainerWindow.getItemContainer();
+                }
+            }
+            return null;
+        }
         ComponentType<EntityStore, ? extends InventoryComponent> type = InventoryComponent.getComponentTypeById(sectionId);
         if (type == null) return null;
         InventoryComponent component = store.getComponent(ref, type);

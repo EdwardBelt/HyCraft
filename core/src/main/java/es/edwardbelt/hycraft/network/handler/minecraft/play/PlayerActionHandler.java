@@ -3,9 +3,7 @@ package es.edwardbelt.hycraft.network.handler.minecraft.play;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.inventory.DropItemStack;
-import com.hypixel.hytale.server.core.entity.LivingEntity;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -30,15 +28,16 @@ public class PlayerActionHandler implements PacketHandler<PlayerActionPacket> {
         World world = store.getExternalData().getWorld();
 
         world.execute(() -> {
-            LivingEntity playerEntity = store.getComponent(ref, Player.getComponentType());
-            Inventory inventory = playerEntity.getInventory();
-            ItemStack hand = inventory.getActiveHotbarItem();
+            ItemStack hand = InventoryComponent.getItemInHand(store, ref);
             if (hand == null || hand.isEmpty()) return;
 
-            int quantity = type.equals(PlayerActionPacket.Status.DROP_ITEM) ? 1 : hand.getQuantity();
-            int slotId = inventory.getActiveHotbarSlot();
+            InventoryComponent.Hotbar hotbarComponent = store.getComponent(ref, InventoryComponent.Hotbar.getComponentType());
+            if (hotbarComponent == null) return;
 
-            DropItemStack packet = new DropItemStack(-1, slotId, quantity);
+            int quantity = type.equals(PlayerActionPacket.Status.DROP_ITEM) ? 1 : hand.getQuantity();
+            int slotId = hotbarComponent.getActiveSlot();
+
+            DropItemStack packet = new DropItemStack(InventoryComponent.HOTBAR_SECTION_ID, slotId, quantity);
             connection.getHytaleChannel().sendPacket(packet);
         });
     }
